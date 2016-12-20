@@ -223,13 +223,18 @@ public class MAHModule : MonoBehaviour {
         return (pCount > 1 && oCount > 1);
     }
 
-    int GetPortCount() {
+    int GetPortCount(ref int uniques) {
         int i = 0;
+        List<string> portTypes = new List<string>();
         foreach(string s in mBombInfo.QueryWidgets(KMBombInfo.QUERYKEY_GET_PORTS,null)) {
             foreach(string c in JsonConvert.DeserializeObject<Dictionary<string, string[]>>(s)["presentPorts"]) {
+                if (!portTypes.Contains(c)) {
+                    portTypes.Add(c);
+                }
                 i++;
             }
         }
+        uniques = portTypes.Count;
         return i;
     }
 
@@ -257,6 +262,11 @@ public class MAHModule : MonoBehaviour {
         return i;
     }
 
+    bool GetSerialMAH() {
+        string s = JsonConvert.DeserializeObject<Dictionary<string, string>>(mBombInfo.QueryWidgets(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER,null)[0])["serial"].ToLower();
+        return s.Contains("m") || s.Contains("a") || s.Contains("h");
+    }
+
     void OnActivate() {
         activated = true;
         List<string> moduleNames = mBombInfo.GetModuleNames();
@@ -268,13 +278,16 @@ public class MAHModule : MonoBehaviour {
 
         int tempWhiteIndex = 0;
         int tempBlackIndex = 0;
+        bool containsMAH = GetSerialMAH();
+        int uniquePorts = 0;
+        int ports = GetPortCount(ref uniquePorts);
 
         int tempLit, tempUnlit;
         GetLitUnlitCount(out tempLit, out tempUnlit);
         if (SpellPoop(ModuleTexts[BlackCardText[tempBlackIndex]])) {
             tempBlackIndex = 1;
         } else {
-            tempBlackIndex = (tempUnlit + GetPortCount()-1 + BlackCardText.Count) % BlackCardText.Count;
+            tempBlackIndex = (tempUnlit + ports-1 + BlackCardText.Count) % BlackCardText.Count;
         }
 
         if (SpellPoop(ModuleTexts[WhiteCardText[tempWhiteIndex]])) {
@@ -298,19 +311,27 @@ public class MAHModule : MonoBehaviour {
             tempBlackIndex += 1;
             tempBlackIndex %= BlackCardText.Count;
         } else {
-            tempWhiteIndex -= 2;
-            tempBlackIndex -= 2;
+            if (containsMAH) {
+                tempWhiteIndex -= 2;
+                tempBlackIndex -= 2;
+            }else if (!SwapWhiteBlack) {
+                tempWhiteIndex = tempLit + tempUnlit - 1;
+                tempBlackIndex = uniquePorts - 1;
+            }else {
+                tempBlackIndex = moduleNames.Count - 1;
+            }
+
             tempWhiteIndex += BlackCardText.Count;
             tempBlackIndex += BlackCardText.Count;
             tempWhiteIndex %= BlackCardText.Count;
             tempBlackIndex %= BlackCardText.Count;
         }
         if (!SwapWhiteBlack) {
-            CorrectLeftCardIndex = (tempBlackIndex + AMOUNT_OF_CARDS) % BlackCardText.Count;
-            CorrectRightCardIndex = (tempWhiteIndex + AMOUNT_OF_CARDS) % BlackCardText.Count;
+            CorrectLeftCardIndex = (tempBlackIndex + BlackCardText.Count) % BlackCardText.Count;
+            CorrectRightCardIndex = (tempWhiteIndex + BlackCardText.Count) % BlackCardText.Count;
         } else {
-            CorrectLeftCardIndex = (tempWhiteIndex + AMOUNT_OF_CARDS) % BlackCardText.Count;
-            CorrectRightCardIndex = (tempBlackIndex + AMOUNT_OF_CARDS) % BlackCardText.Count;
+            CorrectLeftCardIndex = (tempWhiteIndex + BlackCardText.Count) % BlackCardText.Count;
+            CorrectRightCardIndex = (tempBlackIndex + BlackCardText.Count) % BlackCardText.Count;
         }
 
         Debug.Log("[ModulesAgainstHumanity] SwapWhiteBlack: " + SwapWhiteBlack.ToString() + ", CorrectLeft: " + CorrectLeftCardIndex.ToString() + ", CorrectRight: " + CorrectRightCardIndex.ToString());
@@ -318,7 +339,7 @@ public class MAHModule : MonoBehaviour {
     }
 
     void ChooseRandomCardTexts() {
-        /*BlackCardText = new List<string>();
+        BlackCardText = new List<string>();
         WhiteCardText = new List<string>();
         
         for(int i = 0; i < AMOUNT_OF_CARDS; i++) {
@@ -333,9 +354,6 @@ public class MAHModule : MonoBehaviour {
             } while (WhiteCardText.Contains(whiteChosen));
             WhiteCardText.Add(whiteChosen);
         }
-        */
-        BlackCardText = new List<string>(BlackModuleIDs);
-        WhiteCardText = new List<string>(WhiteModuleIDs);
     }
 
     bool ResetButtonInteract() {
