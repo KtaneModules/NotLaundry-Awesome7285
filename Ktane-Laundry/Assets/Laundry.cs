@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Text;
 
 public class Laundry : MonoBehaviour
 {
@@ -64,7 +65,9 @@ public class Laundry : MonoBehaviour
     private string SerialNum = "";
     private float WashingRotate;
     private float DryingRotate;
-    
+    private int[] Solution;
+    private bool isSolved = false;
+
 
     void IroningSlide (int sign)
     {
@@ -87,6 +90,73 @@ public class Laundry : MonoBehaviour
         Knobs[0].transform.Rotate(new Vector3(0, WashingRotate, 0));
         LeftKnobDisplay.material =  WashingDisplay[LeftKnobPos];
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Knobs[0].transform);
+    }
+
+    int[] GetSolutionValues(out StringBuilder LogString) {
+        LogString = new StringBuilder();
+        LogString.Append("[Laundry]Solution Values: ");
+        if (HasBOB && TotalBatteries == 4 && BatteryHolders == 2) {
+            LogString.Append("BOB BABY!");
+            return new int[1];
+        }
+
+        int[] SolutionStates = new int[4];
+        int ItemClothing = (BombInfo.GetSolvableModuleNames().Count - BombInfo.GetSolvedModuleNames().Count + TotalIndicators + 6) % 6;
+        int ItemMaterial = (TotalPorts + BombInfo.GetSolvedModuleNames().Count - BatteryHolders + 6) % 6;
+        int ItemColor = (LastDigitSerial + TotalBatteries + BombInfo.GetStrikes() + 6) % 6;
+        LogString.AppendFormat("Clothing: {0}, Material: {1}, Color: {2} | ", ItemClothing, ItemMaterial, ItemColor);
+
+        bool CloudedPearl = ItemColor == 4;
+        bool LeatherJadeCluster = ItemMaterial == 5 || ItemColor == 3;
+        bool CorsetCorduroy = ItemClothing == 0 || ItemMaterial == 4;
+        bool WoolStarLemon = ItemMaterial == 2 || ItemColor == 1;
+        bool MaterialSerial = false;
+
+        foreach (char c in MaterialNames[ItemMaterial]) {
+            if (SerialNum.Contains(c + "")) {
+                MaterialSerial = true;
+            }
+        }
+
+        if (CloudedPearl) {
+            LogString.Append("Clouded pearl rule | ");
+            SolutionStates[3] = 2;
+        } else if (CorsetCorduroy) {
+            LogString.Append("Corset or Coruroy rule | ");
+            SolutionStates[3] = MaterialType[ItemMaterial, 3];
+        } else if (MaterialSerial) {
+            LogString.Append("Material has letter in serial | ");
+            SolutionStates[3] = ColorType[ItemColor, 3];
+        } else {
+            LogString.Append("Special is clothing | ");
+            SolutionStates[3] = ClothingType[ItemClothing, 3];
+        }
+
+
+        if (LeatherJadeCluster) {
+            LogString.Append("Leather or jade cluster rule | ");
+            SolutionStates[0] = 4;
+        } else {
+            LogString.Append("Washing on material | ");
+            SolutionStates[0] = MaterialType[ItemMaterial, 0];
+        }
+
+
+        if (WoolStarLemon) {
+            LogString.Append("Wool or star lemon rule | ");
+            SolutionStates[1] = 3;
+        } else {
+            LogString.Append("Drying on color | ");
+            SolutionStates[1] = ColorType[ItemColor, 1];
+        }
+        LogString.Append("Ironing on clothing | ");
+        SolutionStates[2] = ClothingType[ItemClothing, 2];
+
+        LogString.Append("End result: ");
+        foreach (int i in SolutionStates) {
+            LogString.Append(i + " ");
+        }
+        return SolutionStates;
     }
 
     void RightKnob()
@@ -134,109 +204,46 @@ public class Laundry : MonoBehaviour
             {
                 HasBOB = true;
             }
-        } 
+        }
+        StringBuilder s;
+        Solution = GetSolutionValues(out s);
+        Debug.Log(s.ToString());
 
     } 
 
-    int[] GetSolutionValues()
-    {
-
-        if (HasBOB && TotalBatteries == 4 && BatteryHolders == 2)
-        {
-            return new int[1];
-        }
-
-        int[] SolutionStates = new int[4];
-        int ClothingItem = (BombInfo.GetSolvableModuleNames().Count - BombInfo.GetSolvedModuleNames().Count + TotalIndicators + 6) % 6;
-        int ItemMaterial = (TotalPorts + BombInfo.GetSolvedModuleNames().Count - BatteryHolders + 6) % 6;
-        int ItemColor = (LastDigitSerial + TotalBatteries + BombInfo.GetStrikes() + 6) % 6 ;
-
-        bool CloudedPearl = ItemColor == 4;
-        bool LeatherJadeCluster = ItemMaterial == 5 || ItemColor == 3;
-        bool CorsetCorduroy = ClothingItem == 0 || ItemMaterial == 4;
-        bool WoolStarLemon = ItemMaterial == 2 || ItemColor == 1;
-        bool MaterialSerial = false;
-
-        foreach (char c in MaterialNames[ItemMaterial])
-        {
-            if (SerialNum.Contains(c+""))
-            {
-                MaterialSerial = true;
-            }
-        }
-        if (CloudedPearl)
-        {
-            SolutionStates[3] = 2;
-        }
-        else if (CorsetCorduroy)
-        {
-            SolutionStates[3] = MaterialType[ItemMaterial, 3];
-        }
-        else if (MaterialSerial)
-        {
-            SolutionStates[3] = ColorType[ItemColor, 3];
-        }
-        else
-        {
-            SolutionStates[3] = ClothingType[ClothingItem, 3];
-        }
-
-
-        if (LeatherJadeCluster)
-        {
-            SolutionStates[0] = 4;
-        }
-        else
-        {
-            SolutionStates[0] = MaterialType[ItemMaterial, 0];
-        }
-
-
-        if (WoolStarLemon)
-        {
-            SolutionStates[1] = 3;
-        }
-        else
-        {
-            SolutionStates[1] = ColorType[ItemColor, 1];
-        }
-        SolutionStates[2] = ClothingType[ClothingItem, 2];
-
-        return SolutionStates;
-    }
+    
 
 
     void HandlePass()
     {
-        GetComponent<KMBombModule>().HandlePass();
+        BombModule.HandlePass();
     }
 
     void HandleStrike()
     {
-        GetComponent<KMBombModule>().HandleStrike();
+        BombModule.HandleStrike();
     }
 
 
     void UseCoin()
     {
-        int[] Solution = GetSolutionValues();
-        if (Solution.Length == 1)
-        {
-            HandlePass();
-            return;
-        }
-        bool WashingCorrect = Solution[0] == LeftKnobPos;
-        bool DryingCorrect = Solution[1] == RightKnobPos;
-        bool IroningCorrect = Solution[2] == IroningTextPos;
-        bool SpecialCorrect = Solution[3] == SpecialTextPos;
+        if (!isSolved) {
+            if (Solution.Length == 1) {
+                isSolved = true;
+                HandlePass();
+                return;
+            }
+            bool WashingCorrect = Solution[0] == LeftKnobPos;
+            bool DryingCorrect = Solution[1] == RightKnobPos;
+            bool IroningCorrect = Solution[2] == IroningTextPos;
+            bool SpecialCorrect = Solution[3] == SpecialTextPos;
 
-        if (WashingCorrect && DryingCorrect && IroningCorrect && SpecialCorrect)
-        {
-            HandlePass();
-        }
-        else
-        {
-            HandleStrike();
+            if (WashingCorrect && DryingCorrect && IroningCorrect && SpecialCorrect) {
+                isSolved = true;
+                HandlePass();
+            } else {
+                HandleStrike();
+            }
         }
     }
 
