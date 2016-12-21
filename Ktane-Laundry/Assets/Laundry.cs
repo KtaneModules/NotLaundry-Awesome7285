@@ -101,9 +101,10 @@ public class Laundry : MonoBehaviour
         }
 
         int[] SolutionStates = new int[4];
-        int ItemClothing = (BombInfo.GetSolvableModuleNames().Count - BombInfo.GetSolvedModuleNames().Count + TotalIndicators + 6) % 6;
-        int ItemMaterial = (TotalPorts + BombInfo.GetSolvedModuleNames().Count - BatteryHolders + 6) % 6;
-        int ItemColor = (LastDigitSerial + TotalBatteries + BombInfo.GetStrikes() + 6) % 6;
+        int solved = BombInfo.GetSolvedModuleNames().Count;
+        int ItemClothing = (BombInfo.GetSolvableModuleNames().Count - solved + TotalIndicators + 6) % 6;
+        int ItemMaterial = (TotalPorts + solved - BatteryHolders + 6) % 6;
+        int ItemColor = (LastDigitSerial + TotalBatteries + 6) % 6;
         LogString.AppendFormat("Clothing: {0}, Material: {1}, Color: {2} | ", ItemClothing, ItemMaterial, ItemColor);
 
         bool CloudedPearl = ItemColor == 4;
@@ -205,10 +206,6 @@ public class Laundry : MonoBehaviour
                 HasBOB = true;
             }
         }
-        StringBuilder s;
-        Solution = GetSolutionValues(out s);
-        Debug.Log(s.ToString());
-
     } 
 
     
@@ -228,11 +225,16 @@ public class Laundry : MonoBehaviour
     void UseCoin()
     {
         if (!isSolved) {
+            StringBuilder s;
+            Solution = GetSolutionValues(out s);
+            Debug.Log(s.ToString());
             if (Solution.Length == 1) {
                 isSolved = true;
                 HandlePass();
                 return;
             }
+
+            Debug.LogFormat("[Laundry]Entered Values: {0}, {1}, {2}, {3}",LeftKnobPos,RightKnobPos,IroningTextPos,SpecialTextPos);
             bool WashingCorrect = Solution[0] == LeftKnobPos;
             bool DryingCorrect = Solution[1] == RightKnobPos;
             bool IroningCorrect = Solution[2] == IroningTextPos;
