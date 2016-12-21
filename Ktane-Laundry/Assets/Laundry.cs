@@ -41,14 +41,15 @@ public class Laundry : MonoBehaviour
     public KMAudio Sound;
     public MeshRenderer LeftKnobDisplay;
     public MeshRenderer RightKnobDisplay;
+    public KMBombModule BombModule;
 
-    public static int[,] ClothingType = { { 7, 7, 3, 0 }, { 5, 3, 5, 5 }, { 4, 5, 0, 10 }, { 1, 0, 4, 10 }, { 10, 8, 3, 1 }, { 9, 11, 2, 8 } };
-    public static int[,] MaterialType = { { 6, 4, 3, 6 }, { 9, 2, 0, 8 }, { 2, 8, 4, 10 }, { 4, 6, 5, 11 }, { 5, 6, 2, 7 }, { 3, 8, 1, 5 } };
-    public static int[,] ColorType = { { 7, 3, 1, 4 }, { 9, 7, 0, 11 }, { 4, 0, 4, 9 }, { 4, 10, 3, 12 }, { 0, 1, 5, 11 }, { 7, 2, 4, 2, } };
+    private static int[,] ClothingType = { { 7, 7, 3, 0 }, { 5, 3, 5, 5 }, { 4, 5, 0, 10 }, { 1, 0, 4, 10 }, { 10, 8, 3, 1 }, { 9, 11, 2, 8 } };
+    private static int[,] MaterialType = { { 6, 4, 3, 6 }, { 9, 2, 0, 8 }, { 2, 8, 4, 10 }, { 4, 6, 5, 11 }, { 5, 6, 2, 7 }, { 3, 8, 1, 5 } };
+    private static int[,] ColorType = { { 7, 3, 1, 4 }, { 9, 7, 0, 11 }, { 4, 0, 4, 9 }, { 4, 10, 3, 12 }, { 0, 1, 5, 11 }, { 7, 2, 4, 2, } };
       
-    public static string[] IroningText = { "Iron", "Don't Iron", "110°C", "300°F", "200°C", "No Steam" };
-    public static string[] SpecialText = { "Bleach", "Don't Bleach", "No Chlorine", "Dryclean", "Any Solvent", "No Tetrachlore", "Petroleum Only", "Wet Cleaning", "Don't Dryclean", "Short Cycle", "Reduced Moist", "Low Heat", "No Steamfinish" };
-    public static string[] MaterialNames = { "polyester", "cotton", "wool", "nylon", "corduroy", "leather" };
+    private static string[] IroningText = { "Iron", "Don't Iron", "110°C", "300°F", "200°C", "No Steam" };
+    private static string[] SpecialText = { "Bleach", "Don't Bleach", "No Chlorine", "Dryclean", "Any Solvent", "No Tetrachlore", "Petroleum Only", "Wet Cleaning", "Don't Dryclean", "Short Cycle", "Reduced Moist", "Low Heat", "No Steamfinish" };
+    private static string[] MaterialNames = { "polyester", "cotton", "wool", "nylon", "corduroy", "leather" };
 
     private int IroningTextPos = 0;
     private int SpecialTextPos = 0;
@@ -60,12 +61,13 @@ public class Laundry : MonoBehaviour
     private int TotalBatteries = 0;
     private int LastDigitSerial = 0;
     private bool HasBOB = false;
-    private string SerialNum = ""; 
+    private string SerialNum = "";
+    private float WashingRotate;
+    private float DryingRotate;
     
 
     void IroningSlide (int sign)
     {
-        
         IroningTextPos += sign;
         IroningTextPos = (IroningTextPos + IroningText.Length) % IroningText.Length;
         IroningTextDisplay.text = IroningText[IroningTextPos]; 
@@ -82,7 +84,7 @@ public class Laundry : MonoBehaviour
     {
         LeftKnobPos ++ ;
         LeftKnobPos = (LeftKnobPos + WashingDisplay.Length) % WashingDisplay.Length;
-        Knobs[0].transform.Rotate(new Vector3(0, 360.0f/ WashingDisplay.Length, 0));
+        Knobs[0].transform.Rotate(new Vector3(0, WashingRotate, 0));
         LeftKnobDisplay.material =  WashingDisplay[LeftKnobPos];
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Knobs[0].transform);
     }
@@ -91,7 +93,7 @@ public class Laundry : MonoBehaviour
     {
         RightKnobPos ++ ;
         RightKnobPos = (RightKnobPos + DryingDisplay.Length) % DryingDisplay.Length;
-        Knobs[1].transform.Rotate(new Vector3(0, 360.0f / DryingDisplay.Length, 0));
+        Knobs[1].transform.Rotate(new Vector3(0, DryingRotate, 0));
         RightKnobDisplay.material = DryingDisplay[RightKnobPos];
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Knobs[1].transform);
     }
@@ -247,8 +249,9 @@ public class Laundry : MonoBehaviour
 
     void Start()
     {
-
-     GetComponent<KMBombModule>().OnActivate += GetBombValues;
+        WashingRotate = 360.0f / WashingDisplay.Length;
+        DryingRotate = 360.0f / DryingDisplay.Length;
+        BombModule.OnActivate += GetBombValues;
       
         for (int i = 0; i < SlidersTop.Length; i++)
         {
