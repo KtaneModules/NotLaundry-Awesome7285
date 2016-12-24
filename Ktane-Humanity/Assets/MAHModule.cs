@@ -18,7 +18,7 @@ public class MAHModule : MonoBehaviour {
     public static Material RightCardMat;
     public MeshRenderer LeftCardMesh;
     public MeshRenderer RightCardMesh;
-    //public KMGameInfo mGameInfo;
+    public KMGameInfo mGameInfo;
     public TextMesh DummyMesh;
     public KMAudio Audio;
 
@@ -195,6 +195,7 @@ public class MAHModule : MonoBehaviour {
     }
     
     bool CheckSolve() {
+        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, AcceptButton.transform);
         if (!activated)
             return false;
         StringBuilder s = new StringBuilder();
@@ -203,6 +204,7 @@ public class MAHModule : MonoBehaviour {
         if(LeftCardIndex == CorrectLeftCardIndex && RightCardIndex == CorrectRightCardIndex) {
             s.Append("Pass");
             mBombModule.HandlePass();
+            Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime,this.transform);
         } else {
             s.Append("Strike");
             mBombModule.HandleStrike();
@@ -341,7 +343,9 @@ public class MAHModule : MonoBehaviour {
     void ChooseRandomCardTexts() {
         BlackCardText = new List<string>();
         WhiteCardText = new List<string>();
-        
+        StringBuilder Blacks = new StringBuilder();
+        StringBuilder Whites = new StringBuilder();
+
         for(int i = 0; i < AMOUNT_OF_CARDS; i++) {
             string blackChosen = "";
             do {
@@ -353,10 +357,14 @@ public class MAHModule : MonoBehaviour {
                 whiteChosen = WhiteModuleIDs[UnityEngine.Random.Range(0, WhiteModuleIDs.Length - 1)];
             } while (WhiteCardText.Contains(whiteChosen));
             WhiteCardText.Add(whiteChosen);
+            Blacks.Append(blackChosen);
+            Whites.Append(whiteChosen);
         }
+        Debug.LogFormat("[ModulesAgainstHumanity] Chosen black cards: {0}, Chosen white cards {1}",Blacks.ToString(),Whites.ToString());
     }
 
     bool ResetButtonInteract() {
+        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, ResetButton.transform);
         LeftCardIndex = 0;
         UpdateLeftCardText();
         RightCardIndex = 0;
@@ -380,6 +388,8 @@ public class MAHModule : MonoBehaviour {
         RightCardMaterial = Instantiate(RightCardMat);
         LeftCardMesh.material = LeftCardMaterial;
         RightCardMesh.material = RightCardMaterial;
+        
+        mGameInfo.OnLightsChange += OnLightsChange;
 
         if (!SwapWhiteBlack) {
             LeftCardMaterial.color = Color.black;
@@ -395,12 +405,12 @@ public class MAHModule : MonoBehaviour {
 
         for (int i = 0; i < LeftCardButtons.Length; i++) {
             int j = i;
-            LeftCardButtons[j].OnInteract += () => { LeftCardIndex += (2 * j) - 1; UpdateLeftCardText(); return false; };
+            LeftCardButtons[j].OnInteract += () => { Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, LeftCardButtons[j].transform); LeftCardIndex += (2 * j) - 1; UpdateLeftCardText(); return false; };
         }
 
         for (int i = 0; i < RightCardButtons.Length; i++) {
             int j = i;
-            RightCardButtons[j].OnInteract += () => { RightCardIndex += (2 * j) - 1; UpdateRightCardText(); return false; };
+            RightCardButtons[j].OnInteract += () => { Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, RightCardButtons[j].transform); RightCardIndex += (2 * j) - 1; UpdateRightCardText(); return false; };
         }
 
 
@@ -408,33 +418,22 @@ public class MAHModule : MonoBehaviour {
         ResetButton.OnInteract += ResetButtonInteract;
 
         ChooseRandomCardTexts();
-
-        UpdateLeftCardText();
-        UpdateRightCardText();
         
 
-        //mGameInfo.OnLightsChange += OnLightsChange;
+        
         AcceptButton.OnInteract += CheckSolve;
         mBombModule.OnActivate += OnActivate;
         
     }
-
-    void OnDestroy() {
-        //mGameInfo.OnLightsChange -= OnLightsChange;
-        Destroy(LeftCardMaterial);
-        Destroy(RightCardMaterial);
-    }
+    
 
     private void OnLightsChange(bool on) {
         if (on) {
-            if (!SwapWhiteBlack) {
-                LeftCard.color = Color.white;
-            } else {
-                RightCard.color = Color.white;
-            }
+            UpdateLeftCardText();
+            UpdateRightCardText();
         }else {
-            LeftCard.color = Color.black;
-            RightCard.color = Color.black;
+            LeftCard.text = "";
+            RightCard.text = "";
         }
     }
 }

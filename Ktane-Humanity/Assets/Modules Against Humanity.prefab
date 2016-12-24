@@ -58,6 +58,7 @@ GameObject:
   - 114: {fileID: 114000013506941654}
   - 114: {fileID: 114000011436227632}
   - 114: {fileID: 114000011026944924}
+  - 114: {fileID: 114000010759064080}
   m_Layer: 0
   m_Name: Modules Against Humanity
   m_TagString: Untagged
@@ -684,7 +685,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011910490364}
   m_LocalRotation: {x: 0, y: -1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: 0.001, y: 0.0124, z: -0.0029}
+  m_LocalPosition: {x: 0.001, y: 0.0124, z: -0.001}
   m_LocalScale: {x: 0.145, y: 0.03, z: 0.08}
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
   m_Children: []
@@ -750,7 +751,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013903321188}
   m_LocalRotation: {x: 0, y: -1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: -0.0046, y: 0.0162, z: 0.0037}
+  m_LocalPosition: {x: -0.001, y: 0.0162, z: 0.0037}
   m_LocalScale: {x: 0.075, y: 0.0375, z: 0.07}
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
   m_Children: []
@@ -874,7 +875,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012514790994}
   m_LocalRotation: {x: -0, y: -1, z: -0, w: -0.00000004371139}
-  m_LocalPosition: {x: -0.0036, y: 0.0174, z: 0.0039}
+  m_LocalPosition: {x: -0, y: 0.0174, z: 0.0039}
   m_LocalScale: {x: 0.075, y: 0.0375, z: 0.07}
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
   m_Children: []
@@ -1192,7 +1193,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013139144170}
   m_LocalRotation: {x: 0, y: -1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: -0.003, y: 0.0146, z: -0.003}
+  m_LocalPosition: {x: 0.004, y: 0.0146, z: 0.002}
   m_LocalScale: {x: 0.1425, y: 0.03, z: 0.0775}
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
   m_Children: []
@@ -2145,6 +2146,17 @@ MonoBehaviour:
   AllowSelectionWrapY: 0
   ForceSelectionHighlight: 0
   ForceInteractionHighlight: 0
+--- !u!114 &114000010759064080
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010140105254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -271661043, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114000010854140594
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2346,6 +2358,7 @@ MonoBehaviour:
   mBombModule: {fileID: 114000013506941654}
   LeftCardMesh: {fileID: 23000011646766056}
   RightCardMesh: {fileID: 23000012720537822}
+  mGameInfo: {fileID: 114000010759064080}
   DummyMesh: {fileID: 102000010879294268}
   Audio: {fileID: 114000011026944924}
 --- !u!114 &114000012519089746
