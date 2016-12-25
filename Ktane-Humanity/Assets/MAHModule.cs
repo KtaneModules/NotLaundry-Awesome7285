@@ -24,8 +24,8 @@ public class MAHModule : MonoBehaviour {
 
     private const int AMOUNT_OF_CARDS = 10;
 
-    private static string[] WhiteModuleIDs = { "wire sequence", "simon says", "maze", "memory", "needy capacitor", "who's on first", "needy vent gas", "modules against humanity", "needy knob", "morse code", "two bits", "anagrams", "word scramble", "semaphore", "colour flash", "logic", "listening", "shift puzzle", "crazy talk", "silly slots", "probing", "forget me not", "morsematics", "simon states", "perspective pegs", "caesar cipher", "tic tac toe", "astrology", "adventure game", "skewed slots", "blind alley", "english test", "mouse in themaze", "turn the keys", "turn the key", "tetris", "sea shells", "murder","adjacent letters","colored squares" ,"hexamaze" };
-    private static string[] BlackModuleIDs = { "the button", "password", "wires", "keypad", "complicated wires", "chess module", "switches", "emoji math", "lettered keys", "orientation cube", "piano keys", "connection check", "cryptography", "number pad", "alphabet", "round keypad", "plumbing", "safety safe", "resistors", "microcontroller", "the gamepad", "laundry", "3d maze", "follow the leader", "friendship", "the bulb", "monsplode, fight!", "foreign exchange rates", "combination lock", "shape shift", "needy math", "lights out", "motion sense", "needy rotary phone", "needy advanced questions", "monsplode, who?", "filibuster","third base","bitmaps","rock-paper-scissors-l.-sp.","square button" };
+    private static string[] WhiteModuleIDs = { "wire sequence", "simon says", "maze", "memory", "needy capacitor", "who's on first", "needy vent gas", "modules against humanity", "needy knob", "morse code", "two bits", "anagrams", "word scramble", "semaphore", "colour flash", "logic", "listening", "shift puzzle", "crazy talk", "silly slots", "probing", "forget me not", "morsematics", "simon states", "perspective pegs", "caesar cipher", "tic tac toe", "astrology", "adventure game", "skewed slots", "blind alley", "english test", "mouse in themaze", "turn the keys", "turn the key", "tetris", "sea shells", "murder","adjacent letters","colored squares" ,"hexamaze" ,"souvenir" };
+    private static string[] BlackModuleIDs = { "the button", "password", "wires", "keypad", "complicated wires", "chess module", "switches", "emoji math", "lettered keys", "orientation cube", "piano keys", "connection check", "cryptography", "number pad", "alphabet", "round keypad", "plumbing", "safety safe", "resistors", "microcontroller", "the gamepad", "laundry", "3d maze", "follow the leader", "friendship", "the bulb", "monsplode, fight!", "foreign exchange rates", "combination lock", "shape shift", "needy math", "lights out", "motion sense", "needy rotary phone", "needy advanced questions", "monsplode, who?", "filibuster","third base","bitmaps","rock-paper-scissors-l.-sp.","square button", "broken buttons", "word search" };
 
     private static Dictionary<string, string> ModuleTexts = new Dictionary<string, string>() {
         { "wire sequence", "Trickier than it sounds; all the wires are hidden behind panels." },
@@ -109,11 +109,17 @@ public class MAHModule : MonoBehaviour {
         { "bitmaps" ,  "Lost in this bomb? Here's a bit of a map."},
         { "hexamaze", "Someone must have put a-maze-ing hex on you." },
         { "rock-paper-scissors-l.-sp.", "You're fighting a lizard. But don't use caber, use scissors." },
-        { "square button", "Push the square button. Galvanize." }
+        { "square button", "Push the square button. Galvanize." },
+        { "broken buttons", "Pressing these buttons is useless. They’re broken." },
+        { "souviner", "This explosion will leave a few souvenirs on your body." },
+        { "word search", "You’re searching for a word? It’s the bird." }
     };
 
     private List<string> WhiteCardText;
     private List<string> BlackCardText;
+
+    private List<string> LeftCardText;
+    private List<string> RightCardText;
 
     private Material LeftCardMaterial;
     private Material RightCardMaterial;
@@ -173,25 +179,13 @@ public class MAHModule : MonoBehaviour {
     void UpdateLeftCardText() {
         LeftCardIndex += BlackCardText.Count;
         LeftCardIndex %= BlackCardText.Count;
-        string txt;
-        if (!SwapWhiteBlack) {
-            txt = BlackCardText[LeftCardIndex];
-        } else {
-            txt = WhiteCardText[LeftCardIndex];
-        }
-        LeftCard.text = FitTextInCard(ModuleTexts[txt]);
+        LeftCard.text = LeftCardText[LeftCardIndex];
     }
 
     void UpdateRightCardText() {
         RightCardIndex += BlackCardText.Count;
         RightCardIndex %= BlackCardText.Count;
-        string txt;
-        if (!SwapWhiteBlack) {
-            txt = WhiteCardText[RightCardIndex];
-        } else {
-            txt = BlackCardText[RightCardIndex];
-        }
-        RightCard.text = FitTextInCard(ModuleTexts[txt]);
+        RightCard.text = RightCardText[RightCardIndex];
     }
     
     bool CheckSolve() {
@@ -357,8 +351,8 @@ public class MAHModule : MonoBehaviour {
                 whiteChosen = WhiteModuleIDs[UnityEngine.Random.Range(0, WhiteModuleIDs.Length - 1)];
             } while (WhiteCardText.Contains(whiteChosen));
             WhiteCardText.Add(whiteChosen);
-            Blacks.Append(blackChosen);
-            Whites.Append(whiteChosen);
+            Blacks.Append(blackChosen + "|");
+            Whites.Append(whiteChosen + "|");
         }
         Debug.LogFormat("[ModulesAgainstHumanity] Chosen black cards: {0}, Chosen white cards {1}",Blacks.ToString(),Whites.ToString());
     }
@@ -377,10 +371,10 @@ public class MAHModule : MonoBehaviour {
         limit = GetWidth(DummyMesh);
 
         if(LeftCardMat == null) {
-            LeftCardMat = GameObject.Find("LeftCardModel").GetComponent<MeshRenderer>().material;
+            LeftCardMat = LeftCardMesh.material;
         }
         if(RightCardMat == null) {
-            RightCardMat = GameObject.Find("RightCardModel").GetComponent<MeshRenderer>().material;
+            RightCardMat = RightCardMesh.material;
         }
 
         SwapWhiteBlack = UnityEngine.Random.Range(0, 1000) % 2 == 0;
@@ -418,7 +412,7 @@ public class MAHModule : MonoBehaviour {
         ResetButton.OnInteract += ResetButtonInteract;
 
         ChooseRandomCardTexts();
-        
+        GenerateCardTexts();
 
         
         AcceptButton.OnInteract += CheckSolve;
@@ -434,6 +428,21 @@ public class MAHModule : MonoBehaviour {
         }else {
             LeftCard.text = "";
             RightCard.text = "";
+        }
+    }
+    private void GenerateCardTexts() {
+        LeftCardText = new List<string>();
+        RightCardText = new List<string>();
+        for(int i = 0; i < BlackCardText.Count; i++) {
+            string black = BlackCardText[i];
+            string white = WhiteCardText[i];
+            if (!SwapWhiteBlack) {
+                LeftCardText.Add(FitTextInCard(ModuleTexts[black]));
+                RightCardText.Add(FitTextInCard(ModuleTexts[white]));
+            }else {
+                LeftCardText.Add(FitTextInCard(ModuleTexts[white]));
+                RightCardText.Add(FitTextInCard(ModuleTexts[black]));
+            }
         }
     }
 }
