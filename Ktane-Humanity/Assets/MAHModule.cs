@@ -24,8 +24,8 @@ public class MAHModule : MonoBehaviour {
 
     private const int AMOUNT_OF_CARDS = 10;
 
-    private static string[] WhiteModuleIDs = { "wire sequence", "simon says", "maze", "memory", "needy capacitor", "who's on first", "needy vent gas", "modules against humanity", "needy knob", "morse code", "two bits", "anagrams", "word scramble", "semaphore", "colour flash", "logic", "listening", "shift puzzle", "crazy talk", "silly slots", "probing", "forget me not", "morsematics", "simon states", "perspective pegs", "caesar cipher", "tic tac toe", "astrology", "adventure game", "skewed slots", "blind alley", "english test", "mouse in themaze", "turn the keys", "turn the key", "tetris", "sea shells", "murder","adjacent letters","colored squares" ,"hexamaze" ,"souvenir" };
-    private static string[] BlackModuleIDs = { "the button", "password", "wires", "keypad", "complicated wires", "chess module", "switches", "emoji math", "lettered keys", "orientation cube", "piano keys", "connection check", "cryptography", "number pad", "alphabet", "round keypad", "plumbing", "safety safe", "resistors", "microcontroller", "the gamepad", "laundry", "3d maze", "follow the leader", "friendship", "the bulb", "monsplode, fight!", "foreign exchange rates", "combination lock", "shape shift", "needy math", "lights out", "motion sense", "needy rotary phone", "needy advanced questions", "monsplode, who?", "filibuster","third base","bitmaps","rock-paper-scissors-l.-sp.","square button", "broken buttons", "word search" };
+    private static string[] WhiteModuleIDs = { "wire sequence", "simon says", "maze", "memory", "needy capacitor", "who's on first", "needy vent gas", "modules against humanity", "needy knob", "morse code", "two bits", "anagrams", "word scramble", "semaphore", "colour flash", "logic", "listening", "shift puzzle", "crazy talk", "silly slots", "probing", "forget me not", "morsematics", "simon states", "perspective pegs", "caesar cipher", "tic tac toe", "astrology", "adventure game", "skewed slots", "blind alley", "english test", "mouse in themaze", "turn the keys", "turn the key", "tetris", "sea shells", "murder","adjacent letters","colored squares" ,"hexamaze" ,"souvenir", "simon screams" };
+    private static string[] BlackModuleIDs = { "the button", "password", "wires", "keypad", "complicated wires", "chess module", "switches", "emoji math", "lettered keys", "orientation cube", "piano keys", "connection check", "cryptography", "number pad", "alphabet", "round keypad", "plumbing", "safety safe", "resistors", "microcontroller", "the gamepad", "laundry", "3d maze", "follow the leader", "friendship", "the bulb", "monsplode, fight!", "foreign exchange rates", "combination lock", "shape shift", "needy math", "lights out", "motion sense", "needy rotary phone", "needy advanced questions", "monsplode, who?", "filibuster","third base","bitmaps","rock-paper-scissors-l.-sp.","square button", "broken buttons", "word search", "complicated buttons" };
 
     private static Dictionary<string, string> ModuleTexts = new Dictionary<string, string>() {
         { "wire sequence", "Trickier than it sounds; all the wires are hidden behind panels." },
@@ -112,7 +112,9 @@ public class MAHModule : MonoBehaviour {
         { "square button", "Push the square button. Galvanize." },
         { "broken buttons", "Pressing these buttons is useless. They’re broken." },
         { "souviner", "This explosion will leave a few souvenirs on your body." },
-        { "word search", "You’re searching for a word? It’s the bird." }
+        { "word search", "You’re searching for a word? It’s the bird." },
+        { "simon screams", "Simon screams at your incompetence." },
+        { "complicated buttons", "Pressing buttons should be easy, not complicated." }
     };
 
     private List<string> WhiteCardText;

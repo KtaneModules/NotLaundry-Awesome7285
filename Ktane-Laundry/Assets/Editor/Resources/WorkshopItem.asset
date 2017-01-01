@@ -13,13 +13,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WorkshopPublishedFileID: 822892956
   Title: Laundry
-  Description: "Sorting and folding are the least of your worries\r\n\r\nAbout \r\nThis
-    is my very first module, inspired on the washing instructions symbols. I was able
-    to make this because of a lot of help from the KTANE community. Special thanks
-    to AcrylicPaint and Flamanis.\r\n\r\nManual Page \r\nThe manual PDFs are included
-    in the download. However, you can also go to the following link to view the manual:\r\nhttps://www.dropbox.com/s/ityvpvc1cg6pyaw/OnTheSubjectofLaundry.pdf?dl=0
+  Description: "Sorting and folding are the least of your worries \r\n\r\nThis is
+    a reupload of Laundry, so that I can fix for any breaking changes. \r\nHendruid
+    and AcryllicStain are still the brains of the operation, I'm just the codemonkey
+    :) \r\n\r\nIt has been brought to my attention that removing a mod from the workshop
+    does not delete the files for people (That's sorta dumb). So for those of you
+    who were subscribed to the old Laundry you need to manually delete the folder
+    for it: Normal file path is \"Steam/steamapps/workshop/content/341800\" Inside
+    there delete the folder with the name \"755645519\" as that's the folder that
+    contains Laundry's old code. \r\n\r\nAll of the code for the module is on Github
+    here: https://github.com/Flamanis/Ktane-Mods/tree/master/Ktane-Laundry \r\n\r\nManual
+    Page \r\nThe manual PDFs are included in the download. However, you can also go
+    to the following link to view the manual: \r\nhttps://www.dropbox.com/s/ityvpvc1cg6pyaw/OnTheSubjectofLaundry.pdf?dl=0
     \r\n\r\n\r\nMission Makers \r\nFor those making custom missions and wanting to
-    reference this module, the type name is Laundry.\n\r\n\r\n\r\n\r\nModuleId: ChessModule"
+    reference this module, the type name is Laundry."
   PreviewImage: {fileID: 2800000, guid: b2af83824e5efcc4da7af705d88db7af, type: 3}
   Tags:
   - Regular Module

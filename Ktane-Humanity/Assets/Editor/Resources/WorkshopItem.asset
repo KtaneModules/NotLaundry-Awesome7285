@@ -16,11 +16,14 @@ MonoBehaviour:
   Description: "Ports, indicators, batteries \u2013 yes, by now we probably all know
     and admit that edgework is important. Sometimes the number of strikes or the number
     of modules is too. But how about the modules themselves? How could we have forgotten
-    them, especially considering they're what we\u2019re trying to defuse? \n\nModules
+    them, especially considering they're what we\u2019re trying to defuse? \r\n\r\nModules
     Against Humanity, inspired by a popular board game (no idea which one, right?),
     addresses this exact problem \u2013 the main heroes of this module are the other
     modules that you may or may not have on the bomb. Can you understand which ones
-    you\u2019re meant to look for though?"
+    you\u2019re meant to look for though? \r\n\r\nThis module was dreamed up by the
+    lovely Catnip, like always, I'm the codemonkey :) \r\n\r\nThe code for this module
+    is on Github: https://github.com/Flamanis/Ktane-Mods/tree/master/Ktane-Humanity
+    \r\n\r\nThe module id for missions is: ModuleAgainstHumanity"
   PreviewImage: {fileID: 2800000, guid: 91422771ab46eac4b9a89e8023d00e34, type: 3}
   Tags:
   - Regular Module
