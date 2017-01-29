@@ -24,8 +24,8 @@ public class MAHModule : MonoBehaviour {
 
     private const int AMOUNT_OF_CARDS = 10;
 
-    private static string[] WhiteModuleIDs = { "wire sequence", "simon says", "maze", "memory", "needy capacitor", "who's on first", "needy vent gas", "modules against humanity", "needy knob", "morse code", "two bits", "anagrams", "word scramble", "semaphore", "colour flash", "logic", "listening", "mystic square", "crazy talk", "silly slots", "probing", "forget me not", "morsematics", "simon states", "perspective pegs", "caesar cipher", "tic tac toe", "astrology", "adventure game", "skewed slots", "blind alley", "english test", "mouse in the maze", "turn the keys", "turn the key", "tetris", "sea shells", "murder","adjacent letters","colored squares" ,"hexamaze" ,"souvenir", "simon screams" };
-    private static string[] BlackModuleIDs = { "the button", "password", "wires", "keypad", "complicated wires", "chess", "switches", "emoji math", "letter keys", "orientation cube", "piano keys", "connection check", "cryptography", "number pad", "alphabet", "round keypad", "plumbing", "safety safe", "resistors", "microcontroller", "the gamepad", "laundry", "3d maze", "follow the leader", "friendship", "the bulb", "monsplode, fight!", "foreign exchange rates", "combination lock", "shape shift", "needy math", "lights out", "motion sense", "needy rotary phone", "needy quiz", "who's that monsplode?", "filibuster","third base","bitmaps","rock-paper-scissors-l.-sp.","square button", "broken buttons", "word search", "complicated buttons" };
+    private static string[] WhiteModuleIDs = { "wire sequence", "simon says", "maze", "memory", "needy capacitor", "who's on first", "needy vent gas", "modules against humanity", "needy knob", "morse code", "two bits", "anagrams", "word scramble", "semaphore", "colour flash", "logic", "listening", "mystic square", "crazy talk", "silly slots", "probing", "forget me not", "morsematics", "simon states", "perspective pegs", "caesar cipher", "tic tac toe", "astrology", "adventure game", "skewed slots", "blind alley", "english test", "mouse in the maze", "turn the keys", "turn the key", "tetris", "sea shells", "murder","adjacent letters","colored squares" ,"hexamaze" ,"souvenir", "simon screams", "http response", "wire placement", "coordinates", "battleship", };
+    private static string[] BlackModuleIDs = { "the button", "password", "wires", "keypad", "complicated wires", "chess", "switches", "emoji math", "letter keys", "orientation cube", "piano keys", "connection check", "cryptography", "number pad", "alphabet", "round keypad", "plumbing", "safety safe", "resistors", "microcontroller", "the gamepad", "laundry", "3d maze", "follow the leader", "friendship", "the bulb", "monsplode, fight!", "foreign exchange rates", "combination lock", "shape shift", "needy math", "lights out", "motion sense", "needy rotary phone", "needy quiz", "who's that monsplode?", "filibuster","third base","bitmaps","rock-paper-scissors-l.-sp.","square button", "broken buttons", "word search", "complicated buttons", "symbolic password", "light cycle", "text field", "double-oh"};
 
     private static Dictionary<string, string> ModuleTexts = new Dictionary<string, string>() {
         { "3d maze", "Want to see this in 3D? There are special glasses for it." },
@@ -34,6 +34,7 @@ public class MAHModule : MonoBehaviour {
         { "alphabet", "Never try tongue twisters before you learn alphabet." },
         { "anagrams", "The instructions were clear and not in anagrams; you're an idiot." },
         { "astrology", "No success? I guess your zodiac was under the wrong planet's influence." },
+        { "battleship", "This bomb is a true battle, just not on a ship." },
         { "bitmaps" ,  "Lost in this bomb? Here's a bit of a map."},
         { "blind alley", "You're done. No way out from this blind alley." },
         { "broken buttons", "Pressing these buttons is useless. They’re broken." },
@@ -45,8 +46,10 @@ public class MAHModule : MonoBehaviour {
         { "complicated buttons", "Pressing buttons should be easy, not complicated." },
         { "complicated wires", "Cut all the wires! It's not that complicated after all." },
         { "connection check", "Bomb exploded due to bad wifi connection." },
+        { "coordinates", "You're walking funny. Have you lost your coordinates?" },
         { "crazy talk", "You're talking crazy. Get out." },
         { "cryptography", "Your mind is so cryptic, I can't read it." },
+        { "double-oh", "You may have double As, you may have double Ds, but double Os are the best." },
         { "emoji math" , "Did you know your texts can include words, and not just emojis?" },
         { "english test", "Do you know the difference between your crap and you're crap?" },
         { "filibuster", "Remember the title and just keep talking" },
@@ -55,9 +58,11 @@ public class MAHModule : MonoBehaviour {
         { "forget me not", "Well done. You forgot it not." },
         { "friendship", "They say Monopoly ruins friendships. They have not tried KTANE." },
         { "hexamaze", "Someone must have put a-maze-ing hex on you." },
+        { "http response", "404. The bomb not found." },
         { "keypad", "If you recognize any of these symbols, you're a smart fella." },
         { "laundry", "Friends are coming over. Quick, hide all your dirty laundry!" },
         { "letter keys", "Wait, now keys have letters on them? What is this sorcery?" },
+        { "light cycle", "Dark in the room? Just cycle through the lights." },
         { "lights out", "Lights are out. Bomb's unavailable for 10 seconds." },
         { "listening", "Just got a strike. You need to listen to your experts better." },
         { "logic", "Do you have at least a pinch of logic in that head of yours?" },
@@ -100,7 +105,9 @@ public class MAHModule : MonoBehaviour {
         { "souvenir", "This explosion will leave a few souvenirs on your body." },
         { "square button", "Push the square button. Galvanize." },
         { "switches", "It’s useless. Switch to another bomb." },
+        { "symbolic password", "Your password must be 6 symbols long." },
         { "tetris", "If you're tired of bombs, you could always play Tetris instead." },
+        { "text field", "Who needs fields of gold when you have a field of text?" },
         { "the bulb", "You think you have a great idea? Nah, that's just a bulb above your head." },
         { "the button", "Push the button. Galvanize." },
         { "the gamepad", "Two kinds of people: those who use gamepad and the boring ones." },
@@ -111,10 +118,11 @@ public class MAHModule : MonoBehaviour {
         { "two bits", "Here's my two bits of information: you're gonna explode." },
         { "who's on first", "You're clearly the last, but who's first?" },
         { "who's that monsplode?", "Fighting Monsplodes? Identify them first." },
+        { "wire placement", "Be careful where you place those wires!" },
         { "wire sequence", "Trickier than it sounds; all the wires are hidden behind panels." },
         { "wires", "Cut all the wires!" },
         { "word scramble", "You got scrambled by your own sword." },
-        { "word search", "You’re searching for a word? It’s the bird." },
+        { "word search", "You’re searching for a word? It’s the bird." }
     };
 
     private List<string> WhiteCardText;
