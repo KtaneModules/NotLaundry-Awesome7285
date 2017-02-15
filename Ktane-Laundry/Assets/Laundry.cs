@@ -47,10 +47,14 @@ public class Laundry : MonoBehaviour
     private static int[,] ClothingType = { { 7, 7, 3, 0 }, { 5, 3, 5, 5 }, { 4, 5, 0, 10 }, { 1, 0, 4, 10 }, { 10, 8, 3, 1 }, { 9, 11, 2, 8 } };
     private static int[,] MaterialType = { { 6, 4, 3, 6 }, { 9, 2, 0, 8 }, { 2, 8, 4, 10 }, { 4, 6, 5, 11 }, { 5, 6, 2, 7 }, { 3, 9, 1, 5 } };
     private static int[,] ColorType = { { 7, 3, 1, 4 }, { 9, 7, 0, 11 }, { 4, 0, 4, 9 }, { 4, 10, 3, 12 }, { 0, 1, 5, 11 }, { 7, 2, 4, 2, } };
-      
+
+    private static string[] WashingText = { "Machine Wash Permanent Press", "Machine Wash Gentle or Delicate", "Hand Wash", "Do Not Wash", "30°C", "40°C", "50°C", "60°C", "70°C", "95°C", "Do Not Wring" };
+    private static string[] DryingText = { "Tumble Dry", "Low Heat", "Medium Heat", "High Heat", "No Heat", "Hang to Dry", "Drip Dry", "Dry Flat", "Dry in the Shade", "Do Not Dry", "Do Not Tumble Dry", "Dry" };
     private static string[] IroningText = { "Iron", "Don't Iron", "110°C", "300°F", "200°C", "No Steam" };
     private static string[] SpecialText = { "Bleach", "Don't Bleach", "No Chlorine", "Dryclean", "Any Solvent", "No Tetrachlore", "Petroleum Only", "Wet Cleaning", "Don't Dryclean", "Short Cycle", "Reduced Moist", "Low Heat", "No Steamfinish" };
-    private static string[] MaterialNames = { "polyester", "cotton", "wool", "nylon", "corduroy", "leather" };
+    private static string[] ClothingNames = { "Corset", "Shirt", "Skirt", "Skort", "Shorts", "Scarf" };
+    private static string[] MaterialNames = { "Polyester", "Cotton", "Wool", "Nylon", "Corduroy", "Leather" };
+    private static string[] ColorNames = { "Ruby Fountain", "Star Lemon Quartz", "Sapphire Springs", "Jade Cluster", "Clouded Pearl", "Malinite" };
 
     private int IroningTextPos = 0;
     private int SpecialTextPos = 0;
@@ -67,6 +71,10 @@ public class Laundry : MonoBehaviour
     private float DryingRotate;
     private int[] Solution;
     private bool isSolved = false;
+
+    private static int ModuleID = 0;
+
+    private int MyModuleId;
 
 
     void IroningSlide (int sign)
@@ -94,9 +102,9 @@ public class Laundry : MonoBehaviour
 
     int[] GetSolutionValues(out StringBuilder LogString) {
         LogString = new StringBuilder();
-        LogString.Append("[Laundry]Solution Values: ");
+        LogString.Append("[Laundry #" + MyModuleId + "] Solution Values: ");
         if (HasBOB && TotalBatteries == 4 && BatteryHolders == 2) {
-            LogString.Append("BOB BABY!");
+            LogString.Append("We got a Lit Bob and 4 batteries in two holders.");
             return new int[1];
         }
 
@@ -105,7 +113,7 @@ public class Laundry : MonoBehaviour
         int ItemClothing = (BombInfo.GetSolvableModuleNames().Count - solved + TotalIndicators + 6) % 6;
         int ItemMaterial = (TotalPorts + solved - BatteryHolders + 6) % 6;
         int ItemColor = (LastDigitSerial + TotalBatteries + 6) % 6;
-        LogString.AppendFormat("Clothing: {0}, Material: {1}, Color: {2} | ", ItemClothing, ItemMaterial, ItemColor);
+        LogString.AppendFormat("Clothing: {0}, Material: {1}, Color: {2} | ", ClothingNames[ItemClothing], MaterialNames[ItemMaterial], ColorNames[ItemColor]);
 
         bool CloudedPearl = ItemColor == 4;
         bool LeatherJadeCluster = ItemMaterial == 5 || ItemColor == 3;
@@ -113,29 +121,29 @@ public class Laundry : MonoBehaviour
         bool WoolStarLemon = ItemMaterial == 2 || ItemColor == 1;
         bool MaterialSerial = false;
 
-        foreach (char c in MaterialNames[ItemMaterial]) {
+        foreach (char c in MaterialNames[ItemMaterial].ToLower()) {
             if (SerialNum.Contains(c + "")) {
                 MaterialSerial = true;
             }
         }
 
         if (CloudedPearl) {
-            LogString.Append("Clouded pearl rule | ");
+            LogString.Append("Special is Non-Chlorine Bleach | ");
             SolutionStates[3] = 2;
         } else if (CorsetCorduroy) {
-            LogString.Append("Corset or Coruroy rule | ");
+            LogString.Append("Special on Material | ");
             SolutionStates[3] = MaterialType[ItemMaterial, 3];
         } else if (MaterialSerial) {
-            LogString.Append("Material has letter in serial | ");
+            LogString.Append("Special on Color | ");
             SolutionStates[3] = ColorType[ItemColor, 3];
         } else {
-            LogString.Append("Special is clothing | ");
+            LogString.Append("Special on Clothing | ");
             SolutionStates[3] = ClothingType[ItemClothing, 3];
         }
 
 
         if (LeatherJadeCluster) {
-            LogString.Append("Leather or jade cluster rule | ");
+            LogString.Append("Washing is 80°F | ");
             SolutionStates[0] = 4;
         } else {
             LogString.Append("Washing on material | ");
@@ -144,19 +152,20 @@ public class Laundry : MonoBehaviour
 
 
         if (WoolStarLemon) {
-            LogString.Append("Wool or star lemon rule | ");
+            LogString.Append("Drying is High Heat | ");
             SolutionStates[1] = 3;
         } else {
-            LogString.Append("Drying on color | ");
+            LogString.Append("Drying on Color | ");
             SolutionStates[1] = ColorType[ItemColor, 1];
         }
-        LogString.Append("Ironing on clothing | ");
+        LogString.Append("Ironing on Clothing | ");
         SolutionStates[2] = ClothingType[ItemClothing, 2];
 
         LogString.Append("End result: ");
-        foreach (int i in SolutionStates) {
-            LogString.Append(i + " ");
-        }
+        LogString.Append(WashingText[SolutionStates[0]] + ", ");
+        LogString.Append(DryingText[SolutionStates[1]] + ", ");
+        LogString.Append(IroningText[SolutionStates[2]] + ", ");
+        LogString.Append(SpecialText[SolutionStates[3]]);
         return SolutionStates;
     }
 
@@ -234,7 +243,7 @@ public class Laundry : MonoBehaviour
                 return;
             }
 
-            Debug.LogFormat("[Laundry]Entered Values: {0}, {1}, {2}, {3}",LeftKnobPos,RightKnobPos,IroningTextPos,SpecialTextPos);
+            Debug.LogFormat("[Laundry #" + MyModuleId + "] Entered Values: {0}, {1}, {2}, {3}",WashingText[LeftKnobPos],DryingText[RightKnobPos],IroningText[IroningTextPos],SpecialText[SpecialTextPos]);
             bool WashingCorrect = Solution[0] == LeftKnobPos;
             bool DryingCorrect = Solution[1] == RightKnobPos;
             bool IroningCorrect = Solution[2] == IroningTextPos;
@@ -258,6 +267,7 @@ public class Laundry : MonoBehaviour
 
     void Start()
     {
+        MyModuleId = ModuleID++;
         WashingRotate = 360.0f / WashingDisplay.Length;
         DryingRotate = 360.0f / DryingDisplay.Length;
         BombModule.OnActivate += GetBombValues;

@@ -1,6 +1,9 @@
 ﻿ using UnityEngine;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Text;
+using System;
+using System.Linq;
 
 public class ChessBehaviour : MonoBehaviour {
     private enum ChessPieceType {
@@ -214,13 +217,19 @@ public class ChessBehaviour : MonoBehaviour {
     private string[][] generatedPairs;
     private string[] indexSelected;
 
-    public static bool TestRand(ref string[][] generatedPairs, int Sign) {
+    private static int ModuleId = 0;
+    private int MyModuleId;
+
+    private string[] ModuleLoggingStrings;
+
+    public static bool TestRand(ref string[][] generatedPairs, int Sign, int MyModuleId, out string BoardString) {
+        BoardString = "";
         try {
             string[] RandPieces = new string[6];
             string TestString = "";
             int ji = 0;
             while (ji < 6) {
-                string temp = (char)(Random.Range(0, 6) + 'a') + "" + (Random.Range(0, 6) + 1);
+                string temp = (char)(UnityEngine.Random.Range(0, 6) + 'a') + "" + (UnityEngine.Random.Range(0, 6) + 1);
                 if (!TestString.Contains(temp)) { 
                     RandPieces[ji] = temp;
                     TestString += temp;
@@ -290,12 +299,73 @@ public class ChessBehaviour : MonoBehaviour {
                     generatedPairs[Sign][i] = RandPieces[i];
                 }
                 generatedPairs[Sign][6] = emptyArr[0];
+                int[] Numbers = new int[6];
+                int SolutionNumber;
+                {
+                    string s1 = generatedPairs[Sign][6];
+                    SolutionNumber = (6 * (s1[0] - 'a')) + (s1[1] - '1');
+                    for(int i = 0; i < 6; i++) {
+                        s1 = generatedPairs[Sign][i];
+                        Numbers[i] = (6 * (s1[0] - 'a')) + (s1[1] - '1');
+                    }
+                }
+                StringBuilder s = new StringBuilder("┌───┬───┬───┬───┬───┬───┐");
+                
+                for(int i = 0; i < 11; i++) {
+                    s.AppendLine();
+                    if( i % 2 == 0) {
+                        int v =  5 - (i / 2);
+                        for(int j = 0; j < 6; j++) {
+                            s.Append("│");
+                            int o = Array.FindIndex(Numbers, x => x == v * 6 + j);
+                            s.Append(" ");
+                            if (o != -1) {
+                                ChessPieceType c = myPieces[o].piece;
+                                char pieceChar = ' ';
+                                switch (c) {
+                                    case ChessPieceType.Bishop:
+                                        pieceChar = 'B';
+                                        break;
+                                    case ChessPieceType.King:
+                                        pieceChar = 'K';
+                                        break;
+                                    case ChessPieceType.Queen:
+                                        pieceChar = 'Q';
+                                        break;
+                                    case ChessPieceType.Knight:
+                                        pieceChar = 'N';
+                                        break;
+                                    case ChessPieceType.Rook:
+                                        pieceChar = 'R';
+                                        break;
+                                }
+                                s.Append(pieceChar);
+                            } else {
+                                
+                                if (v * 6 + j == SolutionNumber)
+                                    s.Append('×');
+                                else
+                                    s.Append(" ");
+                                
+                            }
+                            s.Append(" ");
+                        }
+                        s.Append("│");
+                    } else {
+                        s.Append("├───┼───┼───┼───┼───┼───┤");
+                    }
+                }
+                s.AppendLine();
+                s.Append("└───┴───┴───┴───┴───┴───┘");
+
+
+                BoardString = s.ToString();
+
                 return true;
 
             }
         }catch(UnityException e) {
-            Debug.Log(e.Message);
-            Debug.Log("TestRand Exception");
+            Debug.Log("[Chess #" + MyModuleId + "] TestRand exception: " + e.Message);
         }
         return false;
     }
@@ -312,7 +382,8 @@ public class ChessBehaviour : MonoBehaviour {
         foreach(string s in indexSelected) {
             MyDebugString += s + ", ";
         }
-        Debug.Log("[Chess]Selected Solution: " + MyDebugString);
+        Debug.Log("[Chess #" + MyModuleId + "] Selected Solution: " + MyDebugString);
+        Debug.Log("[Chess #" + MyModuleId + "] Board:\n" + ModuleLoggingStrings[str[5] % 2]); 
     }
 
     void CheckSolve(int num) {
@@ -361,29 +432,32 @@ public class ChessBehaviour : MonoBehaviour {
             if (!isLetterPressed) {
                 DisplayCoords(num);
             } else {
-                Debug.Log("[Chess]Entered answer: " + letterSelected.ToString() + (num + 1).ToString());
+                Debug.Log("[Chess #" + MyModuleId + "] Entered answer: " + letterSelected.ToString() + (num + 1).ToString());
                 CheckSolve(num);
             }
     }
 
 
     void Start() {
+        MyModuleId = ModuleId++;
+        ModuleLoggingStrings = new string[2];
         generatedPairs = new string[2][];
+        
         for(int i = 0; i < 2; i++) {
             generatedPairs[i] = new string[7];
         }
         for(int i = 0; i < 2; i++) {
-            for (int j = 0; !TestRand(ref generatedPairs, i) && j < 2500; j++) ;
+            for (int j = 0; !TestRand(ref generatedPairs, i, MyModuleId, out ModuleLoggingStrings[i]) && j < 2500; j++) ;
         }
         isLetterPressed = false;
         for(int i = 0; i < bottomButtons.Length; i++) {
             var temp = i;
-            bottomButtons[i].OnInteract += delegate () { mAudio.HandlePlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, bottomButtons[temp].transform); HandleNumbers(temp); return false; };
+            bottomButtons[i].OnInteract += delegate () { mAudio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, bottomButtons[temp].transform); HandleNumbers(temp); return false; };
         }
 
         for(int i = 0; i < topButtons.Length; i++) {
             var temp = i;
-            topButtons[i].OnInteract += delegate () { mAudio.HandlePlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, topButtons[temp].transform); HandleLetters((char)('a' + temp)); return false; };
+            topButtons[i].OnInteract += delegate () { mAudio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, topButtons[temp].transform); HandleLetters((char)('a' + temp)); return false; };
         }
         mBombModule.OnActivate += OnActivate;
     }
