@@ -146,6 +146,9 @@ public class MAHModule : MonoBehaviour {
     private bool SwapWhiteBlack;
     private float limit;
 
+    private static int ModuleId = 1;
+    private int MyModuleId;
+
     
     public static float GetWidth(TextMesh mesh) {
         float width = 0;
@@ -203,7 +206,7 @@ public class MAHModule : MonoBehaviour {
         if (!activated)
             return false;
         StringBuilder s = new StringBuilder();
-        s.AppendFormat("[ModulesAgainstHumanity] Submitted: Left: {0}, Right: {1} : ",LeftCardIndex,RightCardIndex);
+        s.AppendFormat("[ModulesAgainstHumanity #{0}] Submitted: Left: {1}, Right: {2} : ",MyModuleId,LeftCardIndex,RightCardIndex);
 
         if(LeftCardIndex == CorrectLeftCardIndex && RightCardIndex == CorrectRightCardIndex) {
             s.Append("Pass");
@@ -378,6 +381,7 @@ public class MAHModule : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        MyModuleId = ModuleId++;
         limit = GetWidth(DummyMesh);
 
         if(LeftCardMat == null) {

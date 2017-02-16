@@ -72,7 +72,7 @@ public class Laundry : MonoBehaviour
     private int[] Solution;
     private bool isSolved = false;
 
-    private static int ModuleID = 0;
+    private static int ModuleID = 1;
 
     private int MyModuleId;
 
@@ -104,7 +104,7 @@ public class Laundry : MonoBehaviour
         LogString = new StringBuilder();
         LogString.Append("[Laundry #" + MyModuleId + "] Solution Values: ");
         if (HasBOB && TotalBatteries == 4 && BatteryHolders == 2) {
-            LogString.Append("We got a Lit Bob and 4 batteries in two holders.");
+            LogString.Append("We got a Lit Bob and 4 batteries in two holders.\n");
             return new int[1];
         }
 
@@ -113,7 +113,7 @@ public class Laundry : MonoBehaviour
         int ItemClothing = (BombInfo.GetSolvableModuleNames().Count - solved + TotalIndicators + 6) % 6;
         int ItemMaterial = (TotalPorts + solved - BatteryHolders + 6) % 6;
         int ItemColor = (LastDigitSerial + TotalBatteries + 6) % 6;
-        LogString.AppendFormat("Clothing: {0}, Material: {1}, Color: {2} | ", ClothingNames[ItemClothing], MaterialNames[ItemMaterial], ColorNames[ItemColor]);
+        LogString.AppendFormat("Clothing: {0} ({1}), Material: {2} ({3}), Color: {4} ({5})\n", ClothingNames[ItemClothing], ItemClothing, MaterialNames[ItemMaterial], ItemMaterial, ColorNames[ItemColor], ItemColor);
 
         bool CloudedPearl = ItemColor == 4;
         bool LeatherJadeCluster = ItemMaterial == 5 || ItemColor == 3;
@@ -128,37 +128,37 @@ public class Laundry : MonoBehaviour
         }
 
         if (CloudedPearl) {
-            LogString.Append("Special is Non-Chlorine Bleach | ");
+            LogString.Append("Special is Non-Chlorine Bleach, ");
             SolutionStates[3] = 2;
         } else if (CorsetCorduroy) {
-            LogString.Append("Special on Material | ");
+            LogString.Append("Special on Material, ");
             SolutionStates[3] = MaterialType[ItemMaterial, 3];
         } else if (MaterialSerial) {
-            LogString.Append("Special on Color | ");
+            LogString.Append("Special on Color, ");
             SolutionStates[3] = ColorType[ItemColor, 3];
         } else {
-            LogString.Append("Special on Clothing | ");
+            LogString.Append("Special on Clothing, ");
             SolutionStates[3] = ClothingType[ItemClothing, 3];
         }
 
 
         if (LeatherJadeCluster) {
-            LogString.Append("Washing is 80°F | ");
+            LogString.Append("Washing is 80°F, ");
             SolutionStates[0] = 4;
         } else {
-            LogString.Append("Washing on material | ");
+            LogString.Append("Washing on material, ");
             SolutionStates[0] = MaterialType[ItemMaterial, 0];
         }
 
 
         if (WoolStarLemon) {
-            LogString.Append("Drying is High Heat | ");
+            LogString.Append("Drying is High Heat, ");
             SolutionStates[1] = 3;
         } else {
-            LogString.Append("Drying on Color | ");
+            LogString.Append("Drying on Color, ");
             SolutionStates[1] = ColorType[ItemColor, 1];
         }
-        LogString.Append("Ironing on Clothing | ");
+        LogString.Append("Ironing on Clothing\n");
         SolutionStates[2] = ClothingType[ItemClothing, 2];
 
         LogString.Append("End result: ");
@@ -166,6 +166,7 @@ public class Laundry : MonoBehaviour
         LogString.Append(DryingText[SolutionStates[1]] + ", ");
         LogString.Append(IroningText[SolutionStates[2]] + ", ");
         LogString.Append(SpecialText[SolutionStates[3]]);
+        LogString.Append("\n");
         return SolutionStates;
     }
 
@@ -236,14 +237,18 @@ public class Laundry : MonoBehaviour
         if (!isSolved) {
             StringBuilder s;
             Solution = GetSolutionValues(out s);
-            Debug.Log(s.ToString());
+            s.AppendFormat("Entered Values: {0}, {1}, {2}, {3}\n", WashingText[LeftKnobPos], DryingText[RightKnobPos], IroningText[IroningTextPos], SpecialText[SpecialTextPos]);
+
+
+
             if (Solution.Length == 1) {
                 isSolved = true;
+                s.Append("Passed");
+                Debug.Log(s.ToString());
                 HandlePass();
                 return;
             }
 
-            Debug.LogFormat("[Laundry #" + MyModuleId + "] Entered Values: {0}, {1}, {2}, {3}",WashingText[LeftKnobPos],DryingText[RightKnobPos],IroningText[IroningTextPos],SpecialText[SpecialTextPos]);
             bool WashingCorrect = Solution[0] == LeftKnobPos;
             bool DryingCorrect = Solution[1] == RightKnobPos;
             bool IroningCorrect = Solution[2] == IroningTextPos;
@@ -251,10 +256,13 @@ public class Laundry : MonoBehaviour
 
             if (WashingCorrect && DryingCorrect && IroningCorrect && SpecialCorrect) {
                 isSolved = true;
+                s.Append("Passed");
                 HandlePass();
             } else {
+                s.Append("Striked");
                 HandleStrike();
             }
+            Debug.Log(s.ToString());
         }
     }
 

@@ -312,7 +312,7 @@ public class ChessBehaviour : MonoBehaviour {
                 StringBuilder s = new StringBuilder("┌───┬───┬───┬───┬───┬───┐");
                 
                 for(int i = 0; i < 11; i++) {
-                    s.AppendLine();
+                    s.Append("\n");
                     if( i % 2 == 0) {
                         int v =  5 - (i / 2);
                         for(int j = 0; j < 6; j++) {
@@ -355,7 +355,7 @@ public class ChessBehaviour : MonoBehaviour {
                         s.Append("├───┼───┼───┼───┼───┼───┤");
                     }
                 }
-                s.AppendLine();
+                s.Append("\n");
                 s.Append("└───┴───┴───┴───┴───┴───┘");
 
 
@@ -382,8 +382,7 @@ public class ChessBehaviour : MonoBehaviour {
         foreach(string s in indexSelected) {
             MyDebugString += s + ", ";
         }
-        Debug.Log("[Chess #" + MyModuleId + "] Selected Solution: " + MyDebugString);
-        Debug.Log("[Chess #" + MyModuleId + "] Board:\n" + ModuleLoggingStrings[str[5] % 2]); 
+        Debug.LogFormat("[Chess #{0}] Selected Solution: {1}\nBoard:\n{2}",MyModuleId,MyDebugString,ModuleLoggingStrings[str[5]%2]);     
     }
 
     void CheckSolve(int num) {
