@@ -217,7 +217,7 @@ public class ChessBehaviour : MonoBehaviour {
     private string[][] generatedPairs;
     private string[] indexSelected;
 
-    private static int ModuleId = 0;
+    private static int ModuleId = 1;
     private int MyModuleId;
 
     private string[] ModuleLoggingStrings;

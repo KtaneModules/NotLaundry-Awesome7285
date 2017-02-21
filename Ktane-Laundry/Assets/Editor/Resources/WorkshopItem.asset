@@ -24,9 +24,9 @@ MonoBehaviour:
     contains Laundry's old code. \r\n\r\nAll of the code for the module is on Github
     here: https://github.com/Flamanis/Ktane-Mods/tree/master/Ktane-Laundry \r\n\r\nManual
     Page \r\nThe manual PDFs are included in the download. However, you can also go
-    to the following link to view the manual: \r\nhttps://www.dropbox.com/s/ityvpvc1cg6pyaw/OnTheSubjectofLaundry.pdf?dl=0
-    \r\n\r\n\r\nMission Makers \r\nFor those making custom missions and wanting to
-    reference this module, the type name is Laundry."
+    to the following link to view the manual: \r\nktane.timwi.de/HTML/Laundry.html\n\r\n\r\nMission
+    Makers \r\nFor those making custom missions and wanting to reference this module,
+    the type name is Laundry."
   PreviewImage: {fileID: 2800000, guid: b2af83824e5efcc4da7af705d88db7af, type: 3}
   Tags:
   - Regular Module

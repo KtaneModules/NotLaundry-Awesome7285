@@ -15,9 +15,15 @@ MonoBehaviour:
   Title: Chess Mod
   Description: "Chess, a wonderful pastime for many of us. Someone however decided
     to add it to a bomb... \r\n\r\nFind the one space no piece can touch, only then
-    shall this module be disarmed. \r\n\r\n\r\nPdf is included in the project, however
-    here's one on the interwebs: \r\nhttps://drive.google.com/file/d/0B0i5mOsu7nFANllQYW94cWlRaTA/view
-    \r\n\r\n\r\n\r\n\r\n\r\nModuleId: ChessModule"
+    shall this module be disarmed. \r\n\r\nThere is a pdf included in the mod for
+    auto generation, however if you're one of the people who like to use singular
+    manuals, one can be found here:\r\nktane.timwi.de/HTML/Chess.html\r\n\r\nThat
+    being said, all manuals can be viewed online at ktane.timwi.de\r\n\r\nIf there
+    are any issues on any of my mods, feel free to contact me on Discord as Flamanis#7150\r\n\r\nAll
+    the code and assets for this module are fully open source, to the point where
+    you could actually just compile this mod yourself, and can be found here:\r\nhttps://github.com/Flamanis/Ktane-Mods/tree/master/Ktane-Chess\r\n\r\nThanks
+    again to MoMo for the idea for this mod, and creating the manual in the first
+    place.\r\n\r\n\r\nModuleId: ChessModule"
   PreviewImage: {fileID: 2800000, guid: 5ed37d2af68b806428090f83ace06e55, type: 3}
   Tags:
   - Regular Module
