@@ -303,10 +303,10 @@ public class ChessBehaviour : MonoBehaviour {
                 int SolutionNumber;
                 {
                     string s1 = generatedPairs[Sign][6];
-                    SolutionNumber = (6 * (s1[0] - 'a')) + (s1[1] - '1');
+                    SolutionNumber = ((s1[0] - 'a')) + 6 * (s1[1] - '1');
                     for(int i = 0; i < 6; i++) {
                         s1 = generatedPairs[Sign][i];
-                        Numbers[i] = (6 * (s1[0] - 'a')) + (s1[1] - '1');
+                        Numbers[i] = ((s1[0] - 'a')) + 6 * (s1[1] - '1');
                     }
                 }
                 StringBuilder s = new StringBuilder("┌───┬───┬───┬───┬───┬───┐");
@@ -378,11 +378,8 @@ public class ChessBehaviour : MonoBehaviour {
                 str = JsonConvert.DeserializeObject<Dictionary<string, string>>(list[0])["serial"];
         }
         indexSelected = generatedPairs[str[5] % 2];
-        string MyDebugString = "";
-        foreach(string s in indexSelected) {
-            MyDebugString += s + ", ";
-        }
-        Debug.LogFormat("[Chess #{0}] Selected Solution: {1}\nBoard:\n{2}",MyModuleId,MyDebugString,ModuleLoggingStrings[str[5]%2]);     
+        string MyDebugString = String.Join(", ",indexSelected);
+        Debug.LogFormat("[Chess #{0}] Selected Solution: {1}\nBoard:\n{2}",MyModuleId,MyDebugString.ToUpper(),ModuleLoggingStrings[str[5]%2]);     
     }
 
     void CheckSolve(int num) {
