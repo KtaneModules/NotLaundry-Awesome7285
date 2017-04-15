@@ -410,9 +410,9 @@ public class MAHModule : MonoBehaviour {
         }
         outString.Append("Final cards: ");
         if (!SwapWhiteBlack) {
-            outString.AppendFormat("Black: {0}, White:{1}", tempBlackIndex + 1, tempWhiteIndex + 1);
+            outString.AppendFormat("Black: {0}, White: {1}", tempBlackIndex + 1, tempWhiteIndex + 1);
         } else {
-            outString.AppendFormat("White: {0}, Black:{1}", tempWhiteIndex + 1, tempBlackIndex + 1);
+            outString.AppendFormat("White: {0}, Black: {1}", tempWhiteIndex + 1, tempBlackIndex + 1);
         }
 
 

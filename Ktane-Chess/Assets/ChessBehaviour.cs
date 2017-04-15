@@ -457,9 +457,31 @@ public class ChessBehaviour : MonoBehaviour {
         }
         mBombModule.OnActivate += OnActivate;
     }
+
     void OnActivate() {
         SetSolveIndex();
         DisplayCoords(0);
     }
 
+    KMSelectable[] ProcessTwitchCommand(string command) {
+        List<KMSelectable> outputList = new List<KMSelectable>();
+        command = command.ToLower();
+        if (command.StartsWith("press")) {
+            command = command.Substring(5);
+            foreach (char c in command) {
+                if (c == ' ') continue;
+                int let = c - 'a';
+                int num = c - '1';
+                if (let >= 0 && let <= 5)
+                    outputList.Add(topButtons[let]);
+                else if (num >= 0 && num <= 5)
+                    outputList.Add(bottomButtons[num]);
+                else
+                    return null;
+
+            }
+            return outputList.ToArray();
+        }
+        return null;
+    }
 }
