@@ -354,8 +354,8 @@ public class Laundry : MonoBehaviour
             {"hangtodry",5 }, {"hangdry",5 },
             {"dripdry",6 },
             {"dryflat",7 },
-            {"dryintheshade",8 }, {"dryinshade",8 },,
-            {"donotdry",9 }, {"dontdry",9 },,
+            {"dryintheshade",8 }, {"dryinshade",8 },
+            {"donotdry",9 }, {"dontdry",9 },
             {"donottumbledry",10 }, {"donttumbledry",10 },
             {"dry",11 },
         };
