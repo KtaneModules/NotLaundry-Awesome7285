@@ -88,7 +88,7 @@ public class MAHModule : MonoBehaviour {
         { "orientation cube", "Bad luck with your crush? Maybe it’s just their sexual orientation." },
         { "password", "You need to know the secret password to defuse this bomb." },
         { "perspective pegs", "If you can't do it, try to look from a different perspective." },
-        { "piano keys", "Musical instruments? I recommend piano, cruel one or not." },
+        { "piano keys", "Musical instruments? I recommend trying piano." },
         { "plumbing", "If you don't find a way out, try crawling through pipes." },
         { "probing", "Bad news. You're actually being probed by aliens." },
         { "resistors", "Don't resist the temptation. Just do it." },
