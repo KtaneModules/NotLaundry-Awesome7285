@@ -114,7 +114,7 @@ public class Laundry : MonoBehaviour
         int[] SolutionStates = new int[4];
         int solved = BombInfo.GetSolvedModuleNames().Count;
         int ItemClothing = (BombInfo.GetSolvableModuleNames().Count - solved + TotalIndicators + 6) % 6;
-        int ItemMaterial = (TotalPorts + solved - BatteryHolders + 6) % 6;
+        int ItemMaterial = ((TotalPorts + solved - BatteryHolders) % 6 + 6) % 6;
         int ItemColor = (LastDigitSerial + TotalBatteries + 6) % 6;
         LogString.AppendFormat("Clothing: {0} ({1}), Material: {2} ({3}), Color: {4} ({5})\n", ClothingNames[ItemClothing], ItemClothing, MaterialNames[ItemMaterial], ItemMaterial, ColorNames[ItemColor], ItemColor);
 
