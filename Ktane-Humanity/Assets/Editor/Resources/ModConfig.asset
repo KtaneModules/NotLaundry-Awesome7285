@@ -13,5 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: ModulesAgainstHumanity
   title: ModulesAgainstHumanity
+  description: 
   version: 
   outputFolder: build
+  previewImage: {fileID: 2800000, guid: 91422771ab46eac4b9a89e8023d00e34, type: 3}

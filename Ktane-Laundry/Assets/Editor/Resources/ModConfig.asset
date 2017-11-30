@@ -13,5 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: Laundry
   title: Laundry
+  description: 
   version: 
   outputFolder: build
+  previewImage: {fileID: 2800000, guid: b2af83824e5efcc4da7af705d88db7af, type: 3}
