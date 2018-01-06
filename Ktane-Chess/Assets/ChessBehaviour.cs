@@ -477,7 +477,7 @@ public class ChessBehaviour : MonoBehaviour {
                 yield return bottomButtons[i];
                 yield return new WaitForSeconds(0.1f);
                 yield return bottomButtons[i];
-                yield return new WaitForSeconds(0.9f);
+                yield return new WaitForSeconds(1.4f);
             }
             yield return bottomButtons[0];
             yield return new WaitForSeconds(0.1f);

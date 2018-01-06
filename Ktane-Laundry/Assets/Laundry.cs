@@ -103,18 +103,16 @@ public class Laundry : MonoBehaviour
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Knobs[0].transform);
     }
 
-    int[] GetSolutionValues(out StringBuilder LogString) {
-        LogString = new StringBuilder();
-        LogString.Append("[Laundry #" + MyModuleId + "] Solution Values: ");
+    int[] GetSolutionValues(ref StringBuilder LogString, int totalCount, int solvedCount) {
+        LogString.Append("[Laundry #" + MyModuleId + "] Solution values for "+ solvedCount + " solved modules: ");
         if (HasBOB && TotalBatteries == 4 && BatteryHolders == 2) {
-            LogString.Append("We got a Lit Bob and 4 batteries in two holders.\n");
+            LogString.Append("We got a Lit Bob and four batteries in two holders.\n");
             return new int[1];
         }
 
         int[] SolutionStates = new int[4];
-        int solved = BombInfo.GetSolvedModuleNames().Count;
-        int ItemClothing = (BombInfo.GetSolvableModuleNames().Count - solved + TotalIndicators + 6) % 6;
-        int ItemMaterial = ((TotalPorts + solved - BatteryHolders) % 6 + 6) % 6;
+        int ItemClothing = (totalCount - solvedCount + TotalIndicators + 6) % 6;
+        int ItemMaterial = ((TotalPorts + solvedCount - BatteryHolders) % 6 + 6) % 6;
         int ItemColor = (LastDigitSerial + TotalBatteries + 6) % 6;
         LogString.AppendFormat("Clothing: {0} ({1}), Material: {2} ({3}), Color: {4} ({5})\n", ClothingNames[ItemClothing], ItemClothing, MaterialNames[ItemMaterial], ItemMaterial, ColorNames[ItemColor], ItemColor);
 
@@ -238,8 +236,8 @@ public class Laundry : MonoBehaviour
     void UseCoin()
     {
         if (!isSolved) {
-            StringBuilder s;
-            Solution = GetSolutionValues(out s);
+            StringBuilder s = new StringBuilder();
+            Solution = GetSolutionValues(ref s, BombInfo.GetSolvableModuleNames().Count, BombInfo.GetSolvedModuleNames().Count);
             s.AppendFormat("Entered Values: {0}, {1}, {2}, {3}\n", WashingText[LeftKnobPos], DryingText[RightKnobPos], IroningText[IroningTextPos], SpecialText[SpecialTextPos]);
 
 
@@ -282,6 +280,15 @@ public class Laundry : MonoBehaviour
         WashingRotate = 360.0f / WashingDisplay.Length;
         DryingRotate = 360.0f / DryingDisplay.Length;
         BombModule.OnActivate += GetBombValues;
+
+        for(int i = 0; i < 6; i++)
+        {
+            StringBuilder s = new StringBuilder();
+            GetSolutionValues(ref s, BombInfo.GetSolvableModuleNames().Count, i);
+            Debug.Log(s);
+        }
+
+        
       
         for (int i = 0; i < SlidersTop.Length; i++)
         {
@@ -312,13 +319,8 @@ public class Laundry : MonoBehaviour
         
     }
 
-    //The only thing on this module that can cause a strike is inserting a coin.  By using IEnumerable, instructions are guaranteed to be
-    //set as desired, even if a strike happens elsewhere on the bomb.  If we just returned KMSelectable[], the instruction sequence would
-    //be interrupted by strikes caused by other modules.
-    IEnumerator ProcessTwitchCommand(string command)
-    {
-        string rawCommand = command;
-        Dictionary<string, int> washIndex = new Dictionary<string, int>()
+
+    static Dictionary<string, int> washIndex = new Dictionary<string, int>()
         {
             {"machinewashpermanentpress", 0},{"permanentpress", 0},
 
@@ -344,7 +346,7 @@ public class Laundry : MonoBehaviour
 
             {"donotwring",10 }, {"dontwring",10 },
         };
-        Dictionary<string, int> dryIndex = new Dictionary<string, int>()
+    static Dictionary<string, int> dryIndex = new Dictionary<string, int>()
         {
             {"tumbledry",0 }, {"0dot",1}, {"0dots",1},
             {"lowheat",1 }, {"1dot",1 },
@@ -359,7 +361,7 @@ public class Laundry : MonoBehaviour
             {"donottumbledry",10 }, {"donttumbledry",10 },
             {"dry",11 },
         };
-        Dictionary<string, int> ironIndex = new Dictionary<string, int>()
+    static Dictionary<string, int> ironIndex = new Dictionary<string, int>()
         {
             {"iron",0 }, {"is",0 },
             {"donotiron",1 }, {"dontiron",1 },
@@ -368,7 +370,7 @@ public class Laundry : MonoBehaviour
             {"200",4 }, {"200c",4 }, {"200°c",4 }, {"390",4 }, {"390f",4 }, {"390°f",4 },
             {"nosteam",5 },
         };
-        Dictionary<string, int> specialIndex = new Dictionary<string, int>()
+    static Dictionary<string, int> specialIndex = new Dictionary<string, int>()
         {
             {"bleach",0 },
             {"donotbleach",1 }, {"dontbleach",1 },
@@ -385,8 +387,16 @@ public class Laundry : MonoBehaviour
             {"nosteamfinishing",12 }, { "nosteamfinish",12},
         };
 
-        string[] commands = new string[] { "set wash ", "set dry ", "set iron ", "set special " };
-        string[] debuglog = new[] { "Wash", "Dry", "Ironing", "Special" };
+    static string[] commands = new string[] { "set wash ", "set dry ", "set iron ", "set special " };
+    static string[] debuglog = new[] { "Wash", "Dry", "Ironing", "Special" };
+
+    //The only thing on this module that can cause a strike is inserting a coin.  By using IEnumerable, instructions are guaranteed to be
+    //set as desired, even if a strike happens elsewhere on the bomb.  If we just returned KMSelectable[], the instruction sequence would
+    //be interrupted by strikes caused by other modules.
+    IEnumerator ProcessTwitchCommand(string command)
+    {
+        string rawCommand = command;
+        
         int[] targetValues = new[] { LeftKnobPos, RightKnobPos, IroningTextPos, SpecialTextPos };
         int[] currentValues = new[] {LeftKnobPos, RightKnobPos, IroningTextPos, SpecialTextPos};
         string[][] texts = new[] { WashingText, DryingText, IroningText, SpecialText };
