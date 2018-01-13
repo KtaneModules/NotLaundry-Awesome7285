@@ -217,6 +217,13 @@ public class Laundry : MonoBehaviour
                 HasBOB = true;
             }
         }
+
+        for (int i = 0; i < 6; i++)
+        {
+            StringBuilder s = new StringBuilder();
+            GetSolutionValues(ref s, BombInfo.GetSolvableModuleNames().Count, i);
+            Debug.Log(s);
+        }
     } 
 
     
@@ -281,12 +288,7 @@ public class Laundry : MonoBehaviour
         DryingRotate = 360.0f / DryingDisplay.Length;
         BombModule.OnActivate += GetBombValues;
 
-        for(int i = 0; i < 6; i++)
-        {
-            StringBuilder s = new StringBuilder();
-            GetSolutionValues(ref s, BombInfo.GetSolvableModuleNames().Count, i);
-            Debug.Log(s);
-        }
+        
 
         
       
