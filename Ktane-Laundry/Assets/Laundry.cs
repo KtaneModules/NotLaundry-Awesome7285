@@ -52,7 +52,7 @@ public class Laundry : MonoBehaviour
     private static int[,] ColorType = { { 7, 3, 1, 4 }, { 9, 7, 0, 11 }, { 4, 0, 4, 9 }, { 4, 10, 3, 12 }, { 0, 1, 5, 11 }, { 7, 2, 4, 2, } };
 
     private static string[] WashingText = { "Machine Wash Permanent Press", "Machine Wash Gentle or Delicate", "Hand Wash", "Do Not Wash", "30°C", "40°C", "50°C", "60°C", "70°C", "95°C", "Do Not Wring" };
-    private static string[] DryingText = { "Tumble Dry", "Low Heat", "Medium Heat", "High Heat", "No Heat", "Hang to Dry", "Drip Dry", "Dry Flat", "Dry in the Shade", "Do Not Dry", "Do Not Tumble Dry", "Dry" };
+    private static string[] DryingText = { "Tumble Dry", "1 Dot", "1 Dot", "3 Dot", "No Heat", "Hang to Dry", "Drip Dry", "Dry Flat", "Dry in the Shade", "Do Not Dry", "Do Not Tumble Dry", "Dry" };
     private static string[] IroningText = { "Iron", "Don't Iron", "110°C", "300°F", "200°C", "No Steam" };
     private static string[] SpecialText = { "Bleach", "Don't Bleach", "No Chlorine", "Dryclean", "Any Solvent", "No Tetrachlore", "Petroleum Only", "Wet Cleaning", "Don't Dryclean", "Short Cycle", "Reduced Moist", "Low Heat", "No Steamfinish" };
     private static string[] ClothingNames = { "Corset", "Shirt", "Skirt", "Skort", "Shorts", "Scarf" };
@@ -103,8 +103,17 @@ public class Laundry : MonoBehaviour
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Knobs[0].transform);
     }
 
+    void RightKnob()
+    {
+        RightKnobPos++;
+        RightKnobPos = (RightKnobPos + DryingDisplay.Length) % DryingDisplay.Length;
+        Knobs[1].transform.Rotate(new Vector3(0, DryingRotate, 0));
+        RightKnobDisplay.material = DryingDisplay[RightKnobPos];
+        Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Knobs[1].transform);
+    }
+
     int[] GetSolutionValues(ref StringBuilder LogString, int totalCount, int solvedCount) {
-        LogString.Append("[Laundry #" + MyModuleId + "] Solution values for "+ solvedCount + " solved modules: ");
+        LogString.Append("[Laundry #" + MyModuleId + "] Solution values for "+ solvedCount + " solved modules: \n");
         if (HasBOB && TotalBatteries == 4 && BatteryHolders == 2) {
             LogString.Append("We got a Lit Bob and four batteries in two holders.\n");
             return new int[1];
@@ -114,7 +123,7 @@ public class Laundry : MonoBehaviour
         int ItemClothing = (totalCount - solvedCount + TotalIndicators + 6) % 6;
         int ItemMaterial = ((TotalPorts + solvedCount - BatteryHolders) % 6 + 6) % 6;
         int ItemColor = (LastDigitSerial + TotalBatteries + 6) % 6;
-        LogString.AppendFormat("Clothing: {0} ({1}), Material: {2} ({3}), Color: {4} ({5})\n", ClothingNames[ItemClothing], ItemClothing, MaterialNames[ItemMaterial], ItemMaterial, ColorNames[ItemColor], ItemColor);
+        LogString.AppendFormat("Item: {0} ({1}), Material: {2} ({3}), Color: {4} ({5})\n", ClothingNames[ItemClothing], ItemClothing, MaterialNames[ItemMaterial], ItemMaterial, ColorNames[ItemColor], ItemColor);
 
         bool CloudedPearl = ItemColor == 4;
         bool LeatherJadeCluster = ItemMaterial == 5 || ItemColor == 3;
@@ -128,56 +137,58 @@ public class Laundry : MonoBehaviour
             }
         }
 
+
+        if (LeatherJadeCluster)
+        {
+            LogString.Append("Washing is 80°F, ");
+            SolutionStates[0] = 4;
+        }
+        else
+        {
+            LogString.Append("Washing on Material, ");
+            SolutionStates[0] = MaterialType[ItemMaterial, 0];
+        }
+
+        if (WoolStarLemon)
+        {
+            LogString.Append("Drying is 3 Dot, ");
+            SolutionStates[1] = 3;
+        }
+        else
+        {
+            LogString.Append("Drying on Color, ");
+            SolutionStates[1] = ColorType[ItemColor, 1];
+        }
+
+        LogString.Append("Ironing on Item, ");
+        SolutionStates[2] = ClothingType[ItemClothing, 2];
+
         if (CloudedPearl) {
-            LogString.Append("Special is Non-Chlorine Bleach, ");
+            LogString.Append("Special is Non-Chlorine Bleach\n");
             SolutionStates[3] = 2;
         } else if (CorsetCorduroy) {
-            LogString.Append("Special on Material, ");
+            LogString.Append("Special on Material\n");
             SolutionStates[3] = MaterialType[ItemMaterial, 3];
         } else if (MaterialSerial) {
-            LogString.Append("Special on Color, ");
+            LogString.Append("Special on Color\n");
             SolutionStates[3] = ColorType[ItemColor, 3];
         } else {
-            LogString.Append("Special on Clothing, ");
+            LogString.Append("Special on Item\n");
             SolutionStates[3] = ClothingType[ItemClothing, 3];
         }
 
 
-        if (LeatherJadeCluster) {
-            LogString.Append("Washing is 80°F, ");
-            SolutionStates[0] = 4;
-        } else {
-            LogString.Append("Washing on material, ");
-            SolutionStates[0] = MaterialType[ItemMaterial, 0];
-        }
 
 
-        if (WoolStarLemon) {
-            LogString.Append("Drying is High Heat, ");
-            SolutionStates[1] = 3;
-        } else {
-            LogString.Append("Drying on Color, ");
-            SolutionStates[1] = ColorType[ItemColor, 1];
-        }
-        LogString.Append("Ironing on Clothing\n");
-        SolutionStates[2] = ClothingType[ItemClothing, 2];
+        
 
         LogString.Append("End result: ");
-        LogString.Append(WashingText[SolutionStates[0]] + ", ");
-        LogString.Append(DryingText[SolutionStates[1]] + ", ");
-        LogString.Append(IroningText[SolutionStates[2]] + ", ");
-        LogString.Append(SpecialText[SolutionStates[3]]);
+        LogString.AppendFormat("{0}, ", WashingText[SolutionStates[0]]);
+        LogString.AppendFormat("{0}, ", DryingText[SolutionStates[1]]);
+        LogString.AppendFormat("{0}, ", IroningText[SolutionStates[2]]);
+        LogString.AppendFormat("{0}", SpecialText[SolutionStates[3]]);
         LogString.Append("\n");
         return SolutionStates;
-    }
-
-    void RightKnob()
-    {
-        RightKnobPos ++ ;
-        RightKnobPos = (RightKnobPos + DryingDisplay.Length) % DryingDisplay.Length;
-        Knobs[1].transform.Rotate(new Vector3(0, DryingRotate, 0));
-        RightKnobDisplay.material = DryingDisplay[RightKnobPos];
-        Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Knobs[1].transform);
     }
 
     void GetBombValues()

@@ -8,12 +8,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 615501dbe4f3fe94fbf4b564abb10237, type: 3}
-  m_Name: ModConfig
+  m_Script: {fileID: -434690030, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
+  m_Name: TableOfContents
   m_EditorClassIdentifier: 
-  id: MissionForRex
-  title: Suck my dick rex
-  description: Have a mission rexxy poo
-  version: 
-  outputFolder: build
-  previewImage: {fileID: 0}
+  Title: Here's your shit rex
+  Sections:
+  - Title: Stuffs
+    MissionIDs:
+    - mission
