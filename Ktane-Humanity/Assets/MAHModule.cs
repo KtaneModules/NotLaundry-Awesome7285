@@ -25,8 +25,8 @@ public class MAHModule : MonoBehaviour {
 
     private const int AMOUNT_OF_CARDS = 10;
 
-    private static string[] WhiteModuleIDs = { "wire sequence", "simon says", "maze", "memory", "needy capacitor", "who's on first", "needy vent gas", "modules against humanity", "needy knob", "morse code", "two bits", "anagrams", "word scramble", "semaphore", "colour flash", "logic", "listening", "mystic square", "crazy talk", "silly slots", "probing", "forget me not", "morsematics", "simon states", "perspective pegs", "caesar cipher", "tic tac toe", "astrology", "adventure game", "skewed slots", "blind alley", "english test", "mouse in the maze", "turn the keys", "turn the key", "tetris", "sea shells", "murder","adjacent letters","colored squares" ,"hexamaze" ,"souvenir", "simon screams", "http response", "wire placement", "coordinates", "battleship", };
-    private static string[] BlackModuleIDs = { "the button", "password", "wires", "keypad", "complicated wires", "chess", "switches", "emoji math", "letter keys", "orientation cube", "piano keys", "connection check", "cryptography", "number pad", "alphabet", "round keypad", "plumbing", "safety safe", "resistors", "microcontroller", "the gamepad", "laundry", "3d maze", "follow the leader", "friendship", "the bulb", "monsplode, fight!", "foreign exchange rates", "combination lock", "shape shift", "needy math", "lights out", "motion sense", "needy rotary phone", "needy quiz", "who's that monsplode?", "filibuster","third base","bitmaps","rock-paper-scissors-l.-sp.","square button", "broken buttons", "word search", "complicated buttons", "symbolic password", "light cycle", "text field", "double-oh"};
+    private static string[] WhiteModuleIDs = { "wire sequence", "simon says", "maze", "memory", "needy capacitor", "who's on first", "needy vent gas", "modules against humanity", "needy knob", "morse code", "two bits", "anagrams", "word scramble", "semaphore", "colour flash", "logic", "listening", "mystic square", "crazy talk", "silly slots", "probing", "forget me not", "morsematics", "simon states", "perspective pegs", "caesar cipher", "tic tac toe", "astrology", "adventure game", "skewed slots", "blind alley", "english test", "mouse in the maze", "turn the keys", "turn the key", "tetris", "sea shells", "murder","adjacent letters","colored squares" ,"hexamaze" ,"souvenir", "simon screams", "http response", "wire placement", "coordinates", "battleship", "game of life simple", "colored switches", "the clock", "button sequences", "burglar alarm",  "backgrounds", "the stopwatch",  "the iphone", "ice cream", "the swan", "monsplode trading cards", "neutralization", "the sun", "european travel", "blind maze", "cheap checkout",};
+    private static string[] BlackModuleIDs = { "the button", "password", "wires", "keypad", "complicated wires", "chess", "switches", "emoji math", "letter keys", "orientation cube", "piano keys", "connection check", "cryptography", "number pad", "alphabet", "round keypad", "plumbing", "safety safe", "resistors", "microcontroller", "the gamepad", "laundry", "3d maze", "follow the leader", "friendship", "the bulb", "monsplode, fight!", "foreign exchange rates", "combination lock", "shape shift", "needy math", "lights out", "motion sense", "needy rotary phone", "needy quiz", "who's that monsplode?", "filibuster", "third base", "bitmaps", "rock-paper-scissors-l.-sp.", "square button", "broken buttons", "word search", "complicated buttons", "symbolic password", "light cycle", "text field", "double-oh", "game of life cruel", "chord qualities", "big circle", "braille", "creation", "cooking", "zoo", "hunting", "symbolic coordinates", "the moon", "mortal kombat", "faulty backgrounds",};
 
     private static Dictionary<string, string> ModuleTexts = new Dictionary<string, string>() {
         { "3d maze", "Want to see this in 3D? There are special glasses for it." },
@@ -123,7 +123,35 @@ public class MAHModule : MonoBehaviour {
         { "wire sequence", "Trickier than it sounds; all the wires are hidden behind panels." },
         { "wires", "Cut all the wires!" },
         { "word scramble", "You got scrambled by your own sword." },
-        { "word search", "You’re searching for a word? It’s the bird." }
+        { "word search", "You’re searching for a word? It’s the bird." },
+        { "ice cream", "I scream, you scream, but only I love it." },
+        { "the swan", "Your serial number is 4815162342."  },
+        { "monsplode trading cards", "Who cares about Monsplodes? Trade them away!" },
+        { "neutralization", "Your goal is to neutralize this bomb." },
+        { "the sun", "It's so bright! Who turned the sun on?" },
+        { "european travel", "Europe is a great destination for travels." },
+        { "blind maze", "You'll feel like a blind man in this maze." },
+        { "cheap checkout", "Check out this bomb sale! It's so cheap!" },
+        { "the iphone", "Put down your iPhone and solve this bomb!" },
+        { "the stopwatch", "Stop the watch! Hammer time!" },
+        { "backgrounds", "Are you sure you want that background for your photo?" },
+        { "burglar alarm", "This burglar alarm is distracting me from defusing." },
+        { "button sequences", "You can't just press all the buttons, it has to be the correct sequence." },
+        { "the clock", "Tick tock, start the bomb clock." },
+        { "colored switches", "Let's switch on these colours." },
+        { "game of life simple", "I want to play a game. A game of life and death." },
+        { "faulty backgrounds", "You bombed that selfie cause of faulty background." },
+        { "mortal kombat", "The kombat with this bomb is a mortal one." },
+        { "the moon", "Darkness all around, not even the moon is shining." },
+        { "symbolic coordinates", "Coordination does not exist, it's only symbolic." },
+        { "hunting", "If you explode, I'm gonna hunt you down." },
+        { "zoo", "You're an animal. You should be in a zoo." },
+        { "cooking", "You blew me up even though I cooked for you!" },
+        { "creation", "God created the world and you blew it up. Shame on you." },
+        { "braille", "The bomb blew your eyes out. Start learning Braille." },
+        { "big circle", "You blow up, you die. The big circle of life." },
+        { "chord qualities", "You struck the wrong chords. Kaboom." },
+        { "game of life cruel", "Life is cruel. So are games." },
     };
 
     private List<string> WhiteCardText;
