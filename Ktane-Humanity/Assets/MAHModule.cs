@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
+using System.Linq;
 
 public class MAHModule : MonoBehaviour {
     
@@ -23,6 +24,7 @@ public class MAHModule : MonoBehaviour {
     public TextMesh DummyMesh;
     public KMAudio Audio;
 
+    
     private const int AMOUNT_OF_CARDS = 10;
 
     private static string[] WhiteModuleIDs = { "wire sequence", "simon says", "maze", "memory", "needy capacitor", "who's on first", "needy vent gas", "modules against humanity", "needy knob", "morse code", "two bits", "anagrams", "word scramble", "semaphore", "colour flash", "logic", "listening", "mystic square", "crazy talk", "silly slots", "probing", "forget me not", "morsematics", "simon states", "perspective pegs", "caesar cipher", "tic tac toe", "astrology", "adventure game", "skewed slots", "blind alley", "english test", "mouse in the maze", "turn the keys", "turn the key", "tetris", "sea shells", "murder","adjacent letters","colored squares" ,"hexamaze" ,"souvenir", "simon screams", "http response", "wire placement", "coordinates", "battleship", "game of life simple", "colored switches", "the clock", "button sequences", "burglar alarm",  "backgrounds", "the stopwatch",  "the iphone", "ice cream", "the swan", "monsplode trading cards", "neutralization", "the sun", "european travel", "blind maze", "cheap checkout",};
@@ -50,10 +52,10 @@ public class MAHModule : MonoBehaviour {
         { "coordinates", "You're walking funny. Have you lost your coordinates?" },
         { "crazy talk", "You're talking crazy. Get out." },
         { "cryptography", "Your mind is so cryptic, I can't read it." },
-        { "double-oh", "You may have double As, you may have double Ds, but double Os are the best." },
+        { "double-oh", "Who cares about Double As or Double Ds when you can have Double Os?" },
         { "emoji math" , "Did you know your texts can include words, and not just emojis?" },
         { "english test", "Do you know the difference between your crap and you're crap?" },
-        { "filibuster", "Remember the title and just keep talking" },
+        { "filibuster", "Remember the title and just keep talking." },
         { "follow the leader", "If this bomb explodes, you're following the wrong political leader." },
         { "foreign exchange rates", "No currency exchange point? You should've taken your card." },
         { "forget me not", "Well done. You forgot it not." },
@@ -180,6 +182,8 @@ public class MAHModule : MonoBehaviour {
 
     private bool IsSolved = false;
 
+    private bool IsActive = false;
+
     #region CardFormatting
 
     public static float GetWidth(TextMesh mesh) {
@@ -234,6 +238,7 @@ public class MAHModule : MonoBehaviour {
     }
 
     private void OnLightsChange(bool on) {
+        if (!IsActive) return;
         if (on) {
             UpdateLeftCardText();
             UpdateRightCardText();
@@ -259,22 +264,63 @@ public class MAHModule : MonoBehaviour {
         }
     }
 
-    void ChooseRandomCardTexts() {
+    void ChooseRandomCardTexts(List<string> modules) {
         BlackCardText = new List<string>();
         WhiteCardText = new List<string>();
         StringBuilder Blacks = new StringBuilder();
         StringBuilder Whites = new StringBuilder();
+        
+
+        List<string> blackModules = new List<string>();
+        List<string> whiteModules = new List<string>();
+
+        foreach (string s in modules)
+        {
+            if (WhiteModuleIDs.Contains(s))
+            {
+                whiteModules.Add(s);
+            }
+            else if (BlackModuleIDs.Contains(s))
+            {
+                blackModules.Add(s);
+            }
+        }
+
+        int blackMods = 0;
+        int whiteMods = 0;
+
 
         for (int i = 0; i < AMOUNT_OF_CARDS; i++) {
             string blackChosen = "";
-            do {
-                blackChosen = BlackModuleIDs[UnityEngine.Random.Range(0, BlackModuleIDs.Length - 1)];
-            } while (BlackCardText.Contains(blackChosen));
+            int a = UnityEngine.Random.Range(1, 101);
+            if (a > 50 || blackModules.Count == 0)
+                do {
+                    blackChosen = BlackModuleIDs[UnityEngine.Random.Range(0, BlackModuleIDs.Length)];
+                } while (BlackCardText.Contains(blackChosen));
+            else
+            {
+                do
+                {
+                    blackChosen = blackModules[UnityEngine.Random.Range(0, blackModules.Count)];
+                } while (BlackCardText.Contains(blackChosen));
+            }
+            if (blackModules.Contains(blackChosen)) { blackModules.Remove(blackChosen); blackMods++; }
             BlackCardText.Add(blackChosen);
             string whiteChosen = "";
-            do {
-                whiteChosen = WhiteModuleIDs[UnityEngine.Random.Range(0, WhiteModuleIDs.Length - 1)];
-            } while (WhiteCardText.Contains(whiteChosen));
+            a = UnityEngine.Random.Range(1, 101);
+            if (a > 50 || whiteModules.Count == 0) { 
+                do {
+                    whiteChosen = WhiteModuleIDs[UnityEngine.Random.Range(0, WhiteModuleIDs.Length)];
+                } while (WhiteCardText.Contains(whiteChosen));
+            }
+            else
+            {
+                do
+                {
+                    whiteChosen = whiteModules[UnityEngine.Random.Range(0, whiteModules.Count)];
+                } while (WhiteCardText.Contains(whiteChosen));
+            }
+            if (whiteModules.Contains(whiteChosen)) { whiteModules.Remove(whiteChosen); whiteMods++; }
             WhiteCardText.Add(whiteChosen);
             Blacks.Append(blackChosen + "|");
             Whites.Append(whiteChosen + "|");
@@ -344,24 +390,37 @@ public class MAHModule : MonoBehaviour {
         activated = true;
         List<string> moduleNames = mBombInfo.GetModuleNames();
 
-        for(int i = 0; i < moduleNames.Count; i++) {
+        for (int i = 0; i < moduleNames.Count; i++) {
             moduleNames[i] = moduleNames[i].ToLower();
+        }
+        
+
+        ChooseRandomCardTexts(moduleNames.Distinct().ToList());
+        GenerateCardTexts();
+
+        int longestWord = 0;
+        for(int i = 0; i < AMOUNT_OF_CARDS;i++)
+        {
+            longestWord = BlackCardText[i].Length > longestWord ? BlackCardText[i].Length : longestWord;
+            longestWord = WhiteCardText[i].Length > longestWord ? WhiteCardText[i].Length : longestWord;
         }
 
         StringBuilder outString = new StringBuilder();
         outString.AppendFormat("[Modules Against Humanity #{0}] Modules:\n", MyModuleId);
 
+        var formatString1 = "    {0," + -longestWord + "}|{1," + longestWord + "}\n";
         if (!SwapWhiteBlack) {
-            outString.AppendFormat("    {0,-30}|{1,30}\n","Black","White");
+            outString.Append(String.Format(formatString1,"Black","White"));
         } else {
-            outString.AppendFormat("    {0,-30}|{1,30}\n","White","Black");
+            outString.Append(String.Format(formatString1, "White","Black"));
         }
 
+        string formatString2 = "{0,2}: {1," + -longestWord + "}|{2," + longestWord + "}\n";
         for (int i = 0; i < BlackCardText.Count; i++) {
             if (!SwapWhiteBlack) {
-                outString.AppendFormat("{0,2}: {1,-30}|{2,30}\n", i+1, BlackCardText[i], WhiteCardText[i]);
+                outString.Append(String.Format(formatString2, i+1, BlackCardText[i], WhiteCardText[i]));
             } else {
-                outString.AppendFormat("{0,2}: {1,-30}|{2,30}\n", i+1, WhiteCardText[i], BlackCardText[i]);
+                outString.Append(String.Format(formatString2, i+1, WhiteCardText[i], BlackCardText[i]));
             }
         }
         outString.Append("\nText for first two cards:\n");
@@ -444,8 +503,9 @@ public class MAHModule : MonoBehaviour {
             outString.AppendFormat("White: {0}, Black: {1}", tempWhiteIndex + 1, tempBlackIndex + 1);
         }
 
-
-        Debug.Log(outString.ToString());      
+        Debug.Log(String.Format("[Modules Against Humanity#{0}]: Total number of modules on the bomb: {1}",MyModuleId,moduleNames.Count));
+        Debug.Log(outString.ToString());
+        IsActive = true;
     }
 
     bool ResetButtonInteract() {
@@ -467,14 +527,15 @@ public class MAHModule : MonoBehaviour {
         if (LeftCardIndex == CorrectLeftCardIndex && RightCardIndex == CorrectRightCardIndex) {
             IsSolved = true;
             s.Append("Pass");
+            Debug.Log(s.ToString());
             mBombModule.HandlePass();
             Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, this.transform);
         } else {
             s.Append("Strike");
+            Debug.Log(s.ToString());
             mBombModule.HandleStrike();
             ResetButtonInteract();
         }
-        Debug.Log(s.ToString());
         return false;
     }
 
@@ -524,8 +585,7 @@ public class MAHModule : MonoBehaviour {
 
         ResetButton.OnInteract += ResetButtonInteract;
 
-        ChooseRandomCardTexts();
-        GenerateCardTexts();
+
 
         
         AcceptButton.OnInteract += CheckSolve;
