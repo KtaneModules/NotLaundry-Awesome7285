@@ -10,4 +10,4 @@ Laundry is a mod about setting the steps for a load of laundry. https://ktane.ti
 
 Humanity is a mod semi based on Cards Against Humanity (No vulgarity). https://ktane.timwi.de/HTML/Modules%20Against%20Humanity.html
 
-Morse War is a mod in which I don't know how to describe as easily.
+Morse War is a mod in which I don't know how to describe as easily. https://ktane.timwi.de/HTML/Morse%20War.html
