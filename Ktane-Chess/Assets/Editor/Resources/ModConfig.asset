@@ -17,10 +17,11 @@ MonoBehaviour:
     to add it to a bomb... \r\n\r\nFind the one space no piece can touch, only then
     shall this module be disarmed. \r\n\r\nThere is a pdf included in the mod for
     auto generation, however if you're one of the people who like to use singular
-    manuals, one can be found here:\r\nktane.timwi.de/HTML/Chess.html\r\n\r\nThat
-    being said, all manuals can be viewed online at ktane.timwi.de\r\n\r\nThanks again
-    to MoMo for the idea for this mod, and creating the manual in the first place.\r\n\r\n\r\nModuleId:
-    ChessModule"
+    manuals, one can be found here:\r\nhttps://ktane.timwi.de/HTML/Chess.html\r\n\r\nThat
+    being said, all manuals can be viewed online at https://ktane.timwi.de\r\n\nCode
+    for the module can be found at https://github.com/Flamanis/Ktane-Mods/tree/master/Ktane-Chess\n\r\nThanks
+    again to MoMo for the idea for this mod, and creating the manual in the first
+    place.\r\n\r\n\r\nModuleId: ChessModule"
   version: 
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 5ed37d2af68b806428090f83ace06e55, type: 3}
