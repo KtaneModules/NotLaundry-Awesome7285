@@ -2400,23 +2400,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5de4aca4d47e85744b246f4a3a9503d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LeftCardButtons:
+  leftCardButtons:
   - {fileID: 114000013621452778}
   - {fileID: 114000011271370630}
-  RightCardButtons:
+  rightCardButtons:
   - {fileID: 114000013872914556}
   - {fileID: 114000010149468276}
-  ResetButton: {fileID: 114000010735199728}
-  AcceptButton: {fileID: 114000013051610564}
-  LeftCard: {fileID: 102000010138021468}
-  RightCard: {fileID: 102000010378040038}
+  resetButton: {fileID: 114000010735199728}
+  acceptButton: {fileID: 114000013051610564}
+  leftCard: {fileID: 102000010138021468}
+  rightCard: {fileID: 102000010378040038}
   mBombInfo: {fileID: 114000011436227632}
   mBombModule: {fileID: 114000013506941654}
-  LeftCardMesh: {fileID: 23000011646766056}
-  RightCardMesh: {fileID: 23000012720537822}
+  leftCardMesh: {fileID: 23000011646766056}
+  rightCardMesh: {fileID: 23000012720537822}
   mGameInfo: {fileID: 114000010759064080}
-  DummyMesh: {fileID: 102000010879294268}
-  Audio: {fileID: 114000011026944924}
+  dummyMesh: {fileID: 102000010879294268}
+  audio: {fileID: 114000011026944924}
 --- !u!114 &114000012519089746
 MonoBehaviour:
   m_ObjectHideFlags: 1

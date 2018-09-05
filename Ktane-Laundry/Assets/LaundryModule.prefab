@@ -2221,20 +2221,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 559ec33fdd91f1042bb660adae49f404, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BombInfo: {fileID: 11463584}
-  Coinslot: {fileID: 11479676}
-  Knobs:
+  bombInfo: {fileID: 11463584}
+  coinSlot: {fileID: 11479676}
+  knobs:
   - {fileID: 11453852}
   - {fileID: 11462262}
-  SlidersTop:
+  slidersTop:
   - {fileID: 11444874}
   - {fileID: 11473620}
-  SlidersBottom:
+  slidersBottom:
   - {fileID: 11492176}
   - {fileID: 11480762}
-  IroningTextDisplay: {fileID: 10205046}
-  SpecialTextDisplay: {fileID: 10248320}
-  WashingDisplay:
+  ironingTextDisplay: {fileID: 10205046}
+  specialTextDisplay: {fileID: 10248320}
+  washingDisplay:
   - {fileID: 2100000, guid: ca381985225bbff49bd8778ae6994fb6, type: 2}
   - {fileID: 2100000, guid: 3fa24e50b6857d84a8c4d3356e6b5161, type: 2}
   - {fileID: 2100000, guid: 210806771b65e3c46b7fc43fbbe2e62b, type: 2}
@@ -2246,7 +2246,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: f34c84c3209b2bf48a4ad03069725b14, type: 2}
   - {fileID: 2100000, guid: a56afe0be199db141a56f70791003d4b, type: 2}
   - {fileID: 2100000, guid: d9eba03aad668cd41ac284757ebf426c, type: 2}
-  DryingDisplay:
+  dryingDisplay:
   - {fileID: 2100000, guid: 878f08e42d467f34d99854ee6ade2faa, type: 2}
   - {fileID: 2100000, guid: 3c928a0b159bbf547990255639aa3350, type: 2}
   - {fileID: 2100000, guid: ec9b8b19404f9a24f8efa5094eda6232, type: 2}
@@ -2259,10 +2259,10 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 3754a7ba3eb363f418bcc1abda74b8e9, type: 2}
   - {fileID: 2100000, guid: aa63a9f262377014fa863ad972aa269b, type: 2}
   - {fileID: 2100000, guid: 6ca63ae41d000dc42938640a07a12903, type: 2}
-  Sound: {fileID: 11431190}
-  LeftKnobDisplay: {fileID: 2345740}
-  RightKnobDisplay: {fileID: 2362052}
-  BombModule: {fileID: 11449586}
+  leftKnobDisplay: {fileID: 2345740}
+  rightKnobDisplay: {fileID: 2362052}
+  sound: {fileID: 11431190}
+  bombModule: {fileID: 11449586}
 --- !u!212 &21233942
 SpriteRenderer:
   m_ObjectHideFlags: 1

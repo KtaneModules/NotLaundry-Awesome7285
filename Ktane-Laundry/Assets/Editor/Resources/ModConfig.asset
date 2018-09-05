@@ -16,8 +16,9 @@ MonoBehaviour:
   description: "Sorting and folding are the least of your worries \r\n\r\nThis is
     a reupload of Laundry, so that I can fix for any breaking changes. \r\nHendruid
     and AcryllicStain are still the brains of the operation, I'm just the codemonkey
-    :) \r\n\r\n\r\nManual Page \r\nThe manual PDFs are included in the download. However,
-    you can also go to the following link to view the manual: \r\nktane.timwi.de/HTML/Laundry.html\r\n\r\n\r\nMission
+    :) \r\n\nThis mod is on github: https://github.com/Flamanis/Ktane-Mods\n\r\n\r\nManual
+    Page \r\nThe manual PDFs are included in the download. However, you can also go
+    to the following link to view the manual: \r\nhttp://ktane.timwi.de/HTML/Laundry.html\r\n\r\n\r\nMission
     Makers \r\nFor those making custom missions and wanting to reference this module,
     the type name is Laundry."
   version: 

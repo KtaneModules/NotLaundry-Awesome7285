@@ -8,7 +8,7 @@ using System.Text;
 
 public class Laundry : MonoBehaviour
 {
-
+    #region BombStuff
     private class Battery
     {
         public int numbatteries;
@@ -26,259 +26,434 @@ public class Laundry : MonoBehaviour
     {
         public string[] PresentPorts;
     }
-    
+
+    #endregion
+
+    #region Imports
+    //Bomb info
+    public KMBombInfo bombInfo;
+
+    //Different selectables
+    public KMSelectable coinSlot;
+    public KMSelectable[] knobs;
+    public KMSelectable[] slidersTop;
+    public KMSelectable[] slidersBottom;
+
+    //Displays
+    public TextMesh ironingTextDisplay;
+    public TextMesh specialTextDisplay;
+
+    public Material[] washingDisplay;
+    public Material[] dryingDisplay;
+
+    public MeshRenderer leftKnobDisplay;
+    public MeshRenderer rightKnobDisplay;
+
+    //Audio
+    public KMAudio sound;
+
+    //Module itself   
+    public KMBombModule bombModule;
+    #endregion
+
+    #region Tables
+
+    //Enums for instructions.
+    private enum LWash
+    {
+        Perm = 0,
+        Gentle,
+        Hand,
+        DoNot,
+        OneDot,
+        TwoDot,
+        ThreeDot,
+        FourDot,
+        FiveDot,
+        SixDot,
+        Wring
+    }
+
+    private enum LDry
+    {
+        Tumble = 0,
+        OneDot,
+        TwoDot,
+        ThreeDot,
+        NoHeat,
+        Hang,
+        Drip,
+        Flat,
+        Shade,
+        DoNotDry,
+        DoNotTumble,
+        Dry
+    }
+
+    private enum LIron
+    {
+        Iron,
+        DoNot,
+        OneDot,
+        TwoDot,
+        ThreeDot,
+        NoSteam,
+    }
+
+    private enum LSpec
+    {
+        Bleach,
+        DoNotBleach,
+        ChlorineBleach,
+        Dryclean,
+        AnySolvent,
+        Tetrachlore,
+        Petroleum,
+        WetCleaning,
+        DoNotDryclean,
+        ShortCycle,
+        ReducedMoisture,
+        LowHeat,
+        NoSteam
+    }
 
 
+    private enum LClothing
+    {
+        Corset = 0,
+        Shirt,
+        Skirt,
+        Skort,
+        Shorts,
+        Scarf
+    }
+    private enum LMaterial
+    {
+        Polyester = 0,
+        Cotton,
+        Wool,
+        Nylon,
+        Corduroy,
+        Leather
+    }
+    private enum LColor
+    {
+        Ruby = 0,
+        Star,
+        Sapphire,
+        Jade,
+        Clouded,
+        Malinite
+    }
+
+    //Manual hard coding
+    private static Enum[,] ClothingType = 
+    {
+        { LWash.FourDot, LDry.Flat, LIron.TwoDot, LSpec.Bleach }, //Corset
+        { LWash.TwoDot, LDry.ThreeDot, LIron.NoSteam, LSpec.Tetrachlore }, //Shirt
+        { LWash.OneDot, LDry.Hang, LIron.Iron, LSpec.ReducedMoisture }, //Skirt
+        { LWash.Gentle, LDry.Tumble, LIron.ThreeDot, LSpec.ReducedMoisture }, //Skort
+        { LWash.Wring, LDry.Shade, LIron.TwoDot, LSpec.DoNotBleach }, //Shorts
+        { LWash.SixDot, LDry.Dry, LIron.OneDot, LSpec.DoNotDryclean } //Scarf
+    };
+
+    private static Enum[,] MaterialType = 
+    { 
+        { LWash.ThreeDot, LDry.NoHeat, LIron.TwoDot, LSpec.Petroleum }, //Polyester
+        { LWash.SixDot, LDry.TwoDot, LIron.Iron, LSpec.DoNotDryclean }, //Cotton
+        { LWash.Hand, LDry.Shade, LIron.ThreeDot, LSpec.ReducedMoisture }, //Wool
+        { LWash.OneDot, LDry.Drip, LIron.NoSteam, LSpec.LowHeat }, //Nylon
+        { LWash.TwoDot, LDry.Drip, LIron.OneDot, LSpec.WetCleaning }, //Corduroy
+        { LWash.DoNot, LDry.DoNotDry, LIron.DoNot, LSpec.Tetrachlore } //Leather
+    };
+
+    private static Enum[,] ColorType = 
+    { 
+        { LWash.FourDot, LDry.ThreeDot, LIron.DoNot, LSpec.AnySolvent }, //Ruby Fountain
+        { LWash.SixDot, LDry.Flat, LIron.Iron, LSpec.LowHeat }, //Star Lemon
+        { LWash.OneDot, LDry.Tumble, LIron.ThreeDot, LSpec.ShortCycle }, //Sapphire Springs
+        { LWash.OneDot, LDry.DoNotTumble, LIron.TwoDot, LSpec.NoSteam }, //Jade Cluster
+        { LWash.Perm, LDry.OneDot, LIron.NoSteam, LSpec.LowHeat }, //Clourded Pearl
+        { LWash.FourDot, LDry.TwoDot, LIron.ThreeDot, LSpec.ChlorineBleach } //Malinite
+    };
 
 
-    public KMBombInfo BombInfo;
-    public KMSelectable Coinslot;
-    public KMSelectable[] Knobs;
-    public KMSelectable[] SlidersTop;
-    public KMSelectable[] SlidersBottom;
-    public TextMesh IroningTextDisplay;
-    public TextMesh SpecialTextDisplay;
+    //Different texts for showing on the module and logging
+    private static string[] washingText = { "Machine Wash Permanent Press", "Machine Wash Gentle or Delicate", "Hand Wash", "Do Not Wash", "30°C", "40°C", "50°C", "60°C", "70°C", "95°C", "Do Not Wring" };
+    private static string[] dryingText = { "Tumble Dry", "1 Dot", "1 Dot", "3 Dot", "No Heat", "Hang to Dry", "Drip Dry", "Dry Flat", "Dry in the Shade", "Do Not Dry", "Do Not Tumble Dry", "Dry" };
+    private static string[] ironingText = { "Iron", "Don't Iron", "110°C", "300°F", "200°C", "No Steam" };
+    private static string[] specialText = { "Bleach", "Don't Bleach", "No Chlorine", "Dryclean", "Any Solvent", "No Tetrachlore", "Petroleum Only", "Wet Cleaning", "Don't Dryclean", "Short Cycle", "Reduced Moist", "Low Heat", "No Steamfinish" };
+    private static string[] clothingNames = { "Corset", "Shirt", "Skirt", "Skort", "Shorts", "Scarf" };
+    private static string[] materialNames = { "Polyester", "Cotton", "Wool", "Nylon", "Corduroy", "Leather" };
+    private static string[] colorNames = { "Ruby Fountain", "Star Lemon Quartz", "Sapphire Springs", "Jade Cluster", "Clouded Pearl", "Malinite" };
 
-    public Material[] WashingDisplay;
-    public Material[] DryingDisplay;
+    #endregion
 
-    public KMAudio Sound;
-    public MeshRenderer LeftKnobDisplay;
-    public MeshRenderer RightKnobDisplay;
-    public KMBombModule BombModule;
+    #region Internals
 
-    private static int[,] ClothingType = { { 7, 7, 3, 0 }, { 5, 3, 5, 5 }, { 4, 5, 0, 10 }, { 1, 0, 4, 10 }, { 10, 8, 3, 1 }, { 9, 11, 2, 8 } };
-    private static int[,] MaterialType = { { 6, 4, 3, 6 }, { 9, 2, 0, 8 }, { 2, 8, 4, 10 }, { 4, 6, 5, 11 }, { 5, 6, 2, 7 }, { 3, 9, 1, 5 } };
-    private static int[,] ColorType = { { 7, 3, 1, 4 }, { 9, 7, 0, 11 }, { 4, 0, 4, 9 }, { 4, 10, 3, 12 }, { 0, 1, 5, 11 }, { 7, 2, 4, 2, } };
+    //Index positions for changes
+    private int ironingTextPos = 0;
+    private int specialTextPos = 0;
+    private int leftKnobPos = 0;
+    private int rightKnobPos = 0;
 
-    private static string[] WashingText = { "Machine Wash Permanent Press", "Machine Wash Gentle or Delicate", "Hand Wash", "Do Not Wash", "30°C", "40°C", "50°C", "60°C", "70°C", "95°C", "Do Not Wring" };
-    private static string[] DryingText = { "Tumble Dry", "1 Dot", "1 Dot", "3 Dot", "No Heat", "Hang to Dry", "Drip Dry", "Dry Flat", "Dry in the Shade", "Do Not Dry", "Do Not Tumble Dry", "Dry" };
-    private static string[] IroningText = { "Iron", "Don't Iron", "110°C", "300°F", "200°C", "No Steam" };
-    private static string[] SpecialText = { "Bleach", "Don't Bleach", "No Chlorine", "Dryclean", "Any Solvent", "No Tetrachlore", "Petroleum Only", "Wet Cleaning", "Don't Dryclean", "Short Cycle", "Reduced Moist", "Low Heat", "No Steamfinish" };
-    private static string[] ClothingNames = { "Corset", "Shirt", "Skirt", "Skort", "Shorts", "Scarf" };
-    private static string[] MaterialNames = { "Polyester", "Cotton", "Wool", "Nylon", "Corduroy", "Leather" };
-    private static string[] ColorNames = { "Ruby Fountain", "Star Lemon Quartz", "Sapphire Springs", "Jade Cluster", "Clouded Pearl", "Malinite" };
+    //Info from bomb
+    private int totalIndicators = 0;
+    private int batteryHolders = 0;
+    private int totalPorts = 0;
+    private int totalBatteries = 0;
+    private int lastDigitSerial = 0;
+    private bool hasBOB = false;
+    private string serialNum = "";
 
-    private int IroningTextPos = 0;
-    private int SpecialTextPos = 0;
-    private int LeftKnobPos = 0;
-    private int RightKnobPos = 0;
-    private int TotalIndicators = 0;
-    private int BatteryHolders = 0;
-    private int TotalPorts = 0;
-    private int TotalBatteries = 0;
-    private int LastDigitSerial = 0;
-    private bool HasBOB = false;
-    private string SerialNum = "";
-    private float WashingRotate;
-    private float DryingRotate;
-    private int[] Solution;
+    //Angle to rotate knobs
+    private float washingRotate;
+    private float dryingRotate;
+
+    //Solution and if solved
+    private Enum[][] solutions;
     private bool isSolved = false;
+
+    #endregion
+
 
     private static int ModuleID = 1;
 
-    private int MyModuleId;
+    private int myModuleId;
+
+    //Get all of the bomb info
+    void GetBombValues()
+    {
+
+        //Get ports stuff
+        List<string> portList = bombInfo.QueryWidgets(KMBombInfo.QUERYKEY_GET_PORTS, null);
+        foreach (string port in portList)
+        {
+            Ports i = JsonConvert.DeserializeObject<Ports>(port);
+
+            totalPorts += i.PresentPorts.Length;
+
+        }
+
+        //Get Serial number information.
+        Serial serialNumber = JsonConvert.DeserializeObject<Serial>(bombInfo.QueryWidgets(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER, null)[0]);
+        lastDigitSerial = serialNumber.serial[5] - '0';
+        serialNum = serialNumber.serial.ToLower();
 
 
+        //Get batteries information
+        List<string> batteryList = bombInfo.QueryWidgets(KMBombInfo.QUERYKEY_GET_BATTERIES, null);
+        batteryHolders = batteryList.Count;
+
+
+        foreach (string batteries in batteryList)
+        {
+            Battery i = JsonConvert.DeserializeObject<Battery>(batteries);
+            totalBatteries += i.numbatteries;
+        }
+
+        //Get indicators information and check for lit bob
+        List<string> indicatorList = bombInfo.QueryWidgets(KMBombInfo.QUERYKEY_GET_INDICATOR, null);
+        totalIndicators = indicatorList.Count;
+
+        foreach (string indicators in indicatorList)
+        {
+            Indicator i = JsonConvert.DeserializeObject<Indicator>(indicators);
+            if (i.on == "True" && i.label == "BOB")
+            {
+                hasBOB = true;
+            }
+        }
+
+        solutions = new Enum[6][];
+        
+        for (int i = 0; i < 6; i++)
+        {
+            StringBuilder s = new StringBuilder();
+            solutions[i] = GetSolutionValues(ref s, bombInfo.GetSolvableModuleNames().Count, i);
+            Debug.Log(s);
+        }
+    }
+
+    //Gets the solution for a specific set of 'solved' modules. Pregenerated at 1-5.
+    Enum[] GetSolutionValues(ref StringBuilder logString, int totalCount, int solvedCount)
+    {
+        //Start the logging string. 
+        logString.AppendFormat("[Laundry #{0}]: Solution values for {1} solved modules: \n", myModuleId, solvedCount);
+
+        //Check for lit bob case, which is our only 'always win' condition
+        if (hasBOB && totalBatteries == 4 && batteryHolders == 2)
+        {
+            logString.Append("We got a Lit Bob and four batteries in two holders.\n");
+            return new Enum[1];
+        }
+
+        //Generate solution array, and indexes of the different pieces of the items and log that
+        Enum[] solutionStates = new Enum[4];
+        int itemClothing = (totalCount - solvedCount + totalIndicators + 6) % 6;
+        int itemMaterial = ((totalPorts + solvedCount - batteryHolders) % 6 + 6) % 6;
+        int itemColor = (lastDigitSerial + totalBatteries + 6) % 6;
+        logString.AppendFormat("Item: {0} ({1}), Material: {2} ({3}), Color: {4} ({5})\n", clothingNames[itemClothing], itemClothing, materialNames[itemMaterial], itemMaterial, colorNames[itemColor], itemColor);
+
+
+        //Check each conditional in the 'Special rules' area of the manual
+        bool cloudedPearl = itemColor == (int)LColor.Clouded;
+        bool leatherJadeCluster = itemMaterial == (int)LMaterial.Leather || itemColor == (int)LColor.Jade;
+        bool corsetCorduroy = itemClothing == (int)LClothing.Corset || itemMaterial == (int)LMaterial.Corduroy;
+        bool woolStarLemon = itemMaterial == (int)LMaterial.Wool || itemColor == (int)LColor.Star;
+        bool materialSerial = false;
+
+        foreach (char c in materialNames[itemMaterial].ToLower())
+        {
+            if (serialNum.Contains(c + ""))
+            {
+                materialSerial = true;
+            }
+        }
+
+
+        //Set values based on 'Special rules' and log accordingly
+
+        if (leatherJadeCluster)
+        {
+            logString.Append("Washing is 80°F, ");
+            solutionStates[0] = LWash.OneDot;
+        }
+        else
+        {
+            logString.Append("Washing on Material, ");
+            solutionStates[0] = MaterialType[itemMaterial, 0];
+        }
+
+        if (woolStarLemon)
+        {
+            logString.Append("Drying is 3 Dot, ");
+            solutionStates[1] = LDry.ThreeDot;
+        }
+        else
+        {
+            logString.Append("Drying on Color, ");
+            solutionStates[1] = ColorType[itemColor, 1];
+        }
+
+        logString.Append("Ironing on Item, ");
+        solutionStates[2] = ClothingType[itemClothing, 2];
+
+        if (cloudedPearl)
+        {
+            logString.Append("Special is Non-Chlorine Bleach\n");
+            solutionStates[3] = LSpec.ChlorineBleach;
+        }
+        else if (corsetCorduroy)
+        {
+            logString.Append("Special on Material\n");
+            solutionStates[3] = MaterialType[itemMaterial, 3];
+        }
+        else if (materialSerial)
+        {
+            logString.Append("Special on Color\n");
+            solutionStates[3] = ColorType[itemColor, 3];
+        }
+        else
+        {
+            logString.Append("Special on Item\n");
+            solutionStates[3] = ClothingType[itemClothing, 3];
+        }
+
+
+
+
+
+        //Finish the logging with the end results
+        logString.Append("End result: ");
+        logString.AppendFormat("{0}, ", washingText[(int)(LWash)solutionStates[0]]);
+        logString.AppendFormat("{0}, ", dryingText[(int)(LDry)solutionStates[1]]);
+        logString.AppendFormat("{0}, ", ironingText[(int)(LIron)solutionStates[2]]);
+        logString.AppendFormat("{0}", specialText[(int)(LSpec)solutionStates[3]]);
+        logString.Append("\n");
+        return solutionStates;
+    }
+
+
+    //Function for the left/right buttons on the ironing text display, just increments/decrements index and updates accordingly
     void IroningSlide (int sign)
     {
-        IroningTextPos += sign;
-        IroningTextPos = (IroningTextPos + IroningText.Length) % IroningText.Length;
-        IroningTextDisplay.text = IroningText[IroningTextPos]; 
+        ironingTextPos += sign;
+        ironingTextPos = (ironingTextPos + ironingText.Length) % ironingText.Length;
+        ironingTextDisplay.text = ironingText[ironingTextPos];
     }
 
+    //Function for the left/right buttons on the special text display, just increments/decrements index and updates accordingly
     void SpecialSlide (int sign)
     {
-        SpecialTextPos += sign;
-        SpecialTextPos = (SpecialTextPos + SpecialText.Length) % SpecialText.Length;
-        SpecialTextDisplay.text = SpecialText[SpecialTextPos];
+        specialTextPos += sign;
+        specialTextPos = (specialTextPos + specialText.Length) % specialText.Length;
+        specialTextDisplay.text = specialText[specialTextPos];
     }
 
+    //Functions for the knob buttons. Rotate them around based on how many choices there are, update the picture.
     void LeftKnob()
     {
-        LeftKnobPos ++ ;
-        LeftKnobPos = (LeftKnobPos + WashingDisplay.Length) % WashingDisplay.Length;
-        Knobs[0].transform.Rotate(new Vector3(0, WashingRotate, 0));
-        LeftKnobDisplay.material =  WashingDisplay[LeftKnobPos];
-        Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Knobs[0].transform);
+        leftKnobPos ++ ;
+        leftKnobPos = (leftKnobPos + washingDisplay.Length) % washingDisplay.Length;
+        knobs[0].transform.Rotate(new Vector3(0, washingRotate, 0));
+        leftKnobDisplay.material =  washingDisplay[leftKnobPos];
+        sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, knobs[0].transform);
     }
 
     void RightKnob()
     {
-        RightKnobPos++;
-        RightKnobPos = (RightKnobPos + DryingDisplay.Length) % DryingDisplay.Length;
-        Knobs[1].transform.Rotate(new Vector3(0, DryingRotate, 0));
-        RightKnobDisplay.material = DryingDisplay[RightKnobPos];
-        Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Knobs[1].transform);
+        rightKnobPos++;
+        rightKnobPos = (rightKnobPos + dryingDisplay.Length) % dryingDisplay.Length;
+        knobs[1].transform.Rotate(new Vector3(0, dryingRotate, 0));
+        rightKnobDisplay.material = dryingDisplay[rightKnobPos];
+        sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, knobs[1].transform);
     }
+    
 
-    int[] GetSolutionValues(ref StringBuilder LogString, int totalCount, int solvedCount) {
-        LogString.Append("[Laundry #" + MyModuleId + "] Solution values for "+ solvedCount + " solved modules: \n");
-        if (HasBOB && TotalBatteries == 4 && BatteryHolders == 2) {
-            LogString.Append("We got a Lit Bob and four batteries in two holders.\n");
-            return new int[1];
-        }
-
-        int[] SolutionStates = new int[4];
-        int ItemClothing = (totalCount - solvedCount + TotalIndicators + 6) % 6;
-        int ItemMaterial = ((TotalPorts + solvedCount - BatteryHolders) % 6 + 6) % 6;
-        int ItemColor = (LastDigitSerial + TotalBatteries + 6) % 6;
-        LogString.AppendFormat("Item: {0} ({1}), Material: {2} ({3}), Color: {4} ({5})\n", ClothingNames[ItemClothing], ItemClothing, MaterialNames[ItemMaterial], ItemMaterial, ColorNames[ItemColor], ItemColor);
-
-        bool CloudedPearl = ItemColor == 4;
-        bool LeatherJadeCluster = ItemMaterial == 5 || ItemColor == 3;
-        bool CorsetCorduroy = ItemClothing == 0 || ItemMaterial == 4;
-        bool WoolStarLemon = ItemMaterial == 2 || ItemColor == 1;
-        bool MaterialSerial = false;
-
-        foreach (char c in MaterialNames[ItemMaterial].ToLower()) {
-            if (SerialNum.Contains(c + "")) {
-                MaterialSerial = true;
-            }
-        }
-
-
-        if (LeatherJadeCluster)
-        {
-            LogString.Append("Washing is 80°F, ");
-            SolutionStates[0] = 4;
-        }
-        else
-        {
-            LogString.Append("Washing on Material, ");
-            SolutionStates[0] = MaterialType[ItemMaterial, 0];
-        }
-
-        if (WoolStarLemon)
-        {
-            LogString.Append("Drying is 3 Dot, ");
-            SolutionStates[1] = 3;
-        }
-        else
-        {
-            LogString.Append("Drying on Color, ");
-            SolutionStates[1] = ColorType[ItemColor, 1];
-        }
-
-        LogString.Append("Ironing on Item, ");
-        SolutionStates[2] = ClothingType[ItemClothing, 2];
-
-        if (CloudedPearl) {
-            LogString.Append("Special is Non-Chlorine Bleach\n");
-            SolutionStates[3] = 2;
-        } else if (CorsetCorduroy) {
-            LogString.Append("Special on Material\n");
-            SolutionStates[3] = MaterialType[ItemMaterial, 3];
-        } else if (MaterialSerial) {
-            LogString.Append("Special on Color\n");
-            SolutionStates[3] = ColorType[ItemColor, 3];
-        } else {
-            LogString.Append("Special on Item\n");
-            SolutionStates[3] = ClothingType[ItemClothing, 3];
-        }
-
-
-
-
-        
-
-        LogString.Append("End result: ");
-        LogString.AppendFormat("{0}, ", WashingText[SolutionStates[0]]);
-        LogString.AppendFormat("{0}, ", DryingText[SolutionStates[1]]);
-        LogString.AppendFormat("{0}, ", IroningText[SolutionStates[2]]);
-        LogString.AppendFormat("{0}", SpecialText[SolutionStates[3]]);
-        LogString.Append("\n");
-        return SolutionStates;
-    }
-
-    void GetBombValues()
-    {
-
-        List<string> PortList = BombInfo.QueryWidgets(KMBombInfo.QUERYKEY_GET_PORTS, null);
-        foreach (string Portals in PortList)
-        {
-            Ports i = JsonConvert.DeserializeObject<Ports>(Portals);
-
-            TotalPorts += i.PresentPorts.Length;
-        
-        }
-          Serial SerialNumber = JsonConvert.DeserializeObject<Serial>(BombInfo.QueryWidgets(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER, null)[0]);
-          LastDigitSerial = SerialNumber.serial[5] - '0';
-          SerialNum = SerialNumber.serial.ToLower();
-
-        List<string> BatteryList = BombInfo.QueryWidgets(KMBombInfo.QUERYKEY_GET_BATTERIES, null);
-        BatteryHolders = BatteryList.Count;
-
-
-        foreach (string Batteries in BatteryList)
-        {
-            Battery i = JsonConvert.DeserializeObject<Battery>(Batteries);
-            TotalBatteries += i.numbatteries;
-        }
-
-
-        List<string> IndicatorList = BombInfo.QueryWidgets(KMBombInfo.QUERYKEY_GET_INDICATOR, null);
-        TotalIndicators = IndicatorList.Count;
-
-        foreach (string Indicators in IndicatorList)
-        {
-            Indicator i = JsonConvert.DeserializeObject<Indicator>(Indicators);
-            if (i.on == "True" && i.label == "BOB") 
-            {
-                HasBOB = true;
-            }
-        }
-
-        for (int i = 0; i < 6; i++)
-        {
-            StringBuilder s = new StringBuilder();
-            GetSolutionValues(ref s, BombInfo.GetSolvableModuleNames().Count, i);
-            Debug.Log(s);
-        }
-    } 
+     
 
     
 
-
+    //Functions for handling pass and strike, really useless, but nice to have.
     void HandlePass()
     {
-        BombModule.HandlePass();
+        bombModule.HandlePass();
     }
 
     void HandleStrike()
     {
-        BombModule.HandleStrike();
+        bombModule.HandleStrike();
     }
 
 
+    //Called when the coin slot is activated
     void UseCoin()
     {
+        //Play the sound, it's a laundry machine after all
+        sound.PlaySoundAtTransform("Insert Coin", coinSlot.transform);
+
         if (!isSolved) {
+            //Start 'submitted' logging string.
             StringBuilder s = new StringBuilder();
-            Solution = GetSolutionValues(ref s, BombInfo.GetSolvableModuleNames().Count, BombInfo.GetSolvedModuleNames().Count);
-            s.AppendFormat("Entered Values: {0}, {1}, {2}, {3}\n", WashingText[LeftKnobPos], DryingText[RightKnobPos], IroningText[IroningTextPos], SpecialText[SpecialTextPos]);
+            int solvedCount = bombInfo.GetSolvedModuleNames().Count % 6;
+            s.AppendFormat("[Laundry #{1}]: Coin pressed at {0} modules solved\n", solvedCount, myModuleId);
+            Enum[] solution = solutions[solvedCount];
+            s.AppendFormat("Entered Values: {0}, {1}, {2}, {3}\n", washingText[leftKnobPos], dryingText[rightKnobPos], ironingText[ironingTextPos], specialText[specialTextPos]);
 
+            //Bools for checking if entered index are the solution indexes
+            bool WashingCorrect = (int)(LWash)solution[0] == leftKnobPos;
+            bool DryingCorrect = (int)(LDry)solution[1] == rightKnobPos;
+            bool IroningCorrect = (int)(LIron)solution[2] == ironingTextPos;
+            bool SpecialCorrect = (int)(LSpec)solution[3] == specialTextPos;
 
-
-            if (Solution.Length == 1) {
+            //If so, then we pass, else we fail.
+            if (WashingCorrect && DryingCorrect && IroningCorrect && SpecialCorrect || solution.Length == 1) {
                 isSolved = true;
-                s.Append("Passed");
-                Debug.Log(s.ToString());
-                HandlePass();
-                return;
-            }
-
-            bool WashingCorrect = Solution[0] == LeftKnobPos;
-            bool DryingCorrect = Solution[1] == RightKnobPos;
-            bool IroningCorrect = Solution[2] == IroningTextPos;
-            bool SpecialCorrect = Solution[3] == SpecialTextPos;
-
-            if (WashingCorrect && DryingCorrect && IroningCorrect && SpecialCorrect) {
-                isSolved = true;
-                s.Append("Passed");
+                s.Append("Pass");
                 HandlePass();
             } else {
-                s.Append("Striked");
+                s.Append("Strike");
                 HandleStrike();
             }
             Debug.Log(s.ToString());
@@ -291,48 +466,49 @@ public class Laundry : MonoBehaviour
 
 
 
-
+    //Init function
     void Start()
     {
-        MyModuleId = ModuleID++;
-        WashingRotate = 360.0f / WashingDisplay.Length;
-        DryingRotate = 360.0f / DryingDisplay.Length;
-        BombModule.OnActivate += GetBombValues;
+        //Grab id and rotation increments of the knobs based on their picture list
+        myModuleId = ModuleID++;
+        washingRotate = 360.0f / washingDisplay.Length;
+        dryingRotate = 360.0f / dryingDisplay.Length;
+
+        //Add handler for bomb activation
+        bombModule.OnActivate += GetBombValues;
 
         
 
         
-      
-        for (int i = 0; i < SlidersTop.Length; i++)
+        //Add handler for each button
+        for (int i = 0; i < slidersTop.Length; i++)
         {
             var j = i;
-            SlidersTop[i].OnInteract += delegate () { IroningSlide(j * 2 - 1); Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, SlidersTop[j + 1 - 1 ].transform); return false; };
+            //*2-1 gets -1 or 1.
+            slidersTop[i].OnInteract += () => { IroningSlide(j * 2 - 1); sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, slidersTop[j].transform); return false; };
 
         }
-        for (int i = 0; i < SlidersBottom.Length; i++)
+        for (int i = 0; i < slidersBottom.Length; i++)
         {
             var j = i;
-            SlidersBottom[i].OnInteract += delegate () { SpecialSlide(j * 2 - 1); Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, SlidersBottom[j + 1 - 1 ].transform); return false; };
+            slidersBottom[i].OnInteract +=  () => { SpecialSlide(j * 2 - 1); sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, slidersBottom[j].transform); return false; };
 
         }
 
-        Coinslot.OnInteract += delegate () { Sound.PlaySoundAtTransform("Insert Coin", Coinslot.transform);  UseCoin(); return false; }; 
+        coinSlot.OnInteract += () => { UseCoin(); return false; }; 
 
-        Knobs[0].OnInteract += delegate ()
-        { LeftKnob(); return false; };
+        knobs[0].OnInteract += () => { LeftKnob(); return false; };
 
-        Knobs[1].OnInteract += delegate ()
-        { RightKnob(); return false; };
+        knobs[1].OnInteract += () => { RightKnob(); return false; };
 
-        IroningTextDisplay.text = IroningText[IroningTextPos];
-        SpecialTextDisplay.text = SpecialText[SpecialTextPos];
+        //Set the text to display what it should
+        ironingTextDisplay.text = ironingText[ironingTextPos];
+        specialTextDisplay.text = specialText[specialTextPos];
 
-        //LeftKnobDisplay.material.SetTexture("_MainTex", WashingDisplay[LeftKnobPos]);
-        //RightKnobDisplay.material.SetTexture("_MainTex", DryingDisplay[RightKnobPos]);
-        
     }
 
 
+    //All below is CaitSith2 for Twitch Plays.
     static Dictionary<string, int> washIndex = new Dictionary<string, int>()
         {
             {"machinewashpermanentpress", 0},{"permanentpress", 0},
@@ -410,19 +586,19 @@ public class Laundry : MonoBehaviour
     {
         string rawCommand = command;
         
-        int[] targetValues = new[] { LeftKnobPos, RightKnobPos, IroningTextPos, SpecialTextPos };
-        int[] currentValues = new[] {LeftKnobPos, RightKnobPos, IroningTextPos, SpecialTextPos};
-        string[][] texts = new[] { WashingText, DryingText, IroningText, SpecialText };
+        int[] targetValues = new[] { leftKnobPos, rightKnobPos, ironingTextPos, specialTextPos };
+        int[] currentValues = new[] {leftKnobPos, rightKnobPos, ironingTextPos, specialTextPos};
+        string[][] texts = new[] { washingText, dryingText, ironingText, specialText };
         Dictionary<string, int>[] Indexes = new[] { washIndex, dryIndex, ironIndex, specialIndex };
 
         command = command.ToLowerInvariant();
         if (command == "insert coin")
         {
             yield return "Inserting the coin";
-            Debug.LogFormat("[Laundry TwitchPlays #{0}] - Inserting the coin - {1}", MyModuleId, rawCommand);
-            yield return Coinslot;
+            Debug.LogFormat("[Laundry TwitchPlays #{0}] - Inserting the coin - {1}", myModuleId, rawCommand);
+            yield return coinSlot;
             yield return new WaitForSeconds(0.1f);
-            yield return Coinslot;
+            yield return coinSlot;
             yield break;
         }
 
@@ -435,7 +611,7 @@ public class Laundry : MonoBehaviour
             {
                 Debug.LogFormat(
                     "[Laundry TwitchPlays #{0}] - IRC command \"set all\" failed validation. Expected 4 parameters, got {2} parameters. \"{1}\"",
-                    MyModuleId, rawCommand, split.Length);
+                    myModuleId, rawCommand, split.Length);
                 yield break;
             }
 
@@ -454,16 +630,16 @@ public class Laundry : MonoBehaviour
             {
                 Debug.LogFormat(
                     "[Laundry TwitchPlays #{0}] - IRC command \"set all\" parameters not valid. Validation results: Washing = {2}, Drying = {3}, Ironing = {4}, Special = {5}.  Command Sent: \"{1}\"",
-                    MyModuleId, rawCommand,
+                    myModuleId, rawCommand,
                     setAllValid[0] ? "Passed" : "Failed", setAllValid[1] ? "Passed" : "Failed",
                     setAllValid[2] ? "Passed" : "Failed", setAllValid[3] ? "Passed" : "Failed");
                 yield break;
             }
 
-            Debug.LogFormat("[Laundry TwitchPlays #{0}] - Setting Everything - {1}", MyModuleId, rawCommand);
+            Debug.LogFormat("[Laundry TwitchPlays #{0}] - Setting Everything - {1}", myModuleId, rawCommand);
             for (var i = 0; i < commands.Length; i++)
             {
-                Debug.LogFormat("Setting {1} to {2}", MyModuleId, debuglog[i], texts[i][targetValues[i]]);
+                Debug.LogFormat("Setting {1} to {2}", myModuleId, debuglog[i], texts[i][targetValues[i]]);
             }
         }
         else
@@ -472,7 +648,7 @@ public class Laundry : MonoBehaviour
             {
                 if (i == commands.Length)
                 {
-                    Debug.LogFormat("[Laundry TwitchPlays #{0}] - IRC command not parsed: {1}", MyModuleId, rawCommand);
+                    Debug.LogFormat("[Laundry TwitchPlays #{0}] - IRC command not parsed: {1}", myModuleId, rawCommand);
                     yield break;
                 }
 
@@ -481,13 +657,13 @@ public class Laundry : MonoBehaviour
                     command = command.Substring(commands[i].Length).Replace(" ", "").Replace("'", "");
                     if (!Indexes[i].TryGetValue(command.Replace("-", ""), out targetValues[i]) && !int.TryParse(rawCommand, out targetValues[i]))
                     {
-                        Debug.LogFormat("[Laundry TwitchPlays #{0}] - IRC command \"{2}\" parameter not valid. - {1}", MyModuleId, rawCommand, commands[i]);
+                        Debug.LogFormat("[Laundry TwitchPlays #{0}] - IRC command \"{2}\" parameter not valid. - {1}", myModuleId, rawCommand, commands[i]);
                         yield break;
                     }
 
                     targetValues[i] %= texts[i].Length;
                     if (targetValues[i] < 0) targetValues[i] += texts[i].Length;
-                    Debug.LogFormat("[Laundry TwitchPlays #{0}] - Setting {2} to {3} - {1}", MyModuleId, rawCommand, debuglog[i], texts[i][targetValues[i]]);
+                    Debug.LogFormat("[Laundry TwitchPlays #{0}] - Setting {2} to {3} - {1}", myModuleId, rawCommand, debuglog[i], texts[i][targetValues[i]]);
                     break;
                 }
             }
@@ -501,36 +677,36 @@ public class Laundry : MonoBehaviour
 
         if(allSame)
         {
-            Debug.LogFormat("Laundry already set to desired values", MyModuleId);
+            Debug.LogFormat("Laundry already set to desired values", myModuleId);
             yield break;
         }
 
         yield return "Doing the Laundry";
-        while (targetValues[0] != LeftKnobPos)
+        while (targetValues[0] != leftKnobPos)
         {
-            yield return Knobs[0];
+            yield return knobs[0];
             yield return new WaitForSeconds(0.1f);
-            yield return Knobs[0];
+            yield return knobs[0];
         }
-        while (targetValues[1] != RightKnobPos)
+        while (targetValues[1] != rightKnobPos)
         {
-            yield return Knobs[1];
+            yield return knobs[1];
             yield return new WaitForSeconds(0.1f);
-            yield return Knobs[1];
+            yield return knobs[1];
         }
-        while (targetValues[2] != IroningTextPos)
+        while (targetValues[2] != ironingTextPos)
         {
-            int direction = (targetValues[2] < IroningTextPos) ? 0 : 1;
-            yield return SlidersTop[direction];
+            int direction = (targetValues[2] < ironingTextPos) ? 0 : 1;
+            yield return slidersTop[direction];
             yield return new WaitForSeconds(0.1f);
-            yield return SlidersTop[direction];
+            yield return slidersTop[direction];
         }
-        while (targetValues[3] != SpecialTextPos)
+        while (targetValues[3] != specialTextPos)
         {
-            int direction = (targetValues[3] < SpecialTextPos) ? 0 : 1;
-            yield return SlidersBottom[direction];
+            int direction = (targetValues[3] < specialTextPos) ? 0 : 1;
+            yield return slidersBottom[direction];
             yield return new WaitForSeconds(0.1f);
-            yield return SlidersBottom[direction];
+            yield return slidersBottom[direction];
         }
     }
 

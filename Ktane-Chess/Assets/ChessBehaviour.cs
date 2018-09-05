@@ -8,6 +8,7 @@ using System.Linq;
 
 public class ChessBehaviour : MonoBehaviour {
 
+
     #region ChessSim
 
     //Enums for different types of pieces, and spots on the board
@@ -390,7 +391,7 @@ public class ChessBehaviour : MonoBehaviour {
 
         //Determine if wiping or not, if not modify display and set indicator.
         if (index != -1) {
-            letterMesh.text = "" + (char)(indexSelected[index] / 10 + 'A');
+            letterMesh.text = "" + (char)(indexSelected[index] / 10 + 'a');
             numberMesh.text = "" + (char)(indexSelected[index] % 10 + '1');
             lightsArray[index].material.color = new Color(0, 1, 0);
             previousNumberSelected = index;
@@ -457,7 +458,7 @@ public class ChessBehaviour : MonoBehaviour {
             if (!isLetterPressed) {
                 DisplayCoords(num);
             } else {
-                Debug.Log("[Chess #" + MyModuleId + "] Entered answer: " + (char)(letterSelected + 'A') + (num + 1));
+                Debug.Log("[Chess #" + MyModuleId + "] Entered answer: " + (char)(letterSelected + 'a') + (num + 1));
                 CheckSolve(num);
             }
         return false;

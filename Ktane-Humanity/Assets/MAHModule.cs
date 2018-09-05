@@ -6,30 +6,34 @@ using Newtonsoft.Json;
 using System.Linq;
 
 public class MAHModule : MonoBehaviour {
-    
 
-    public KMSelectable[] LeftCardButtons;
-    public KMSelectable[] RightCardButtons;
-    public KMSelectable ResetButton;
-    public KMSelectable AcceptButton;
-    public TextMesh LeftCard;
-    public TextMesh RightCard;
+    #region Imports
+    public KMSelectable[] leftCardButtons;
+    public KMSelectable[] rightCardButtons;
+    public KMSelectable resetButton;
+    public KMSelectable acceptButton;
+    public TextMesh leftCard;
+    public TextMesh rightCard;
     public KMBombInfo mBombInfo;
     public KMBombModule mBombModule;
-    public static Material LeftCardMat;
-    public static Material RightCardMat;
-    public MeshRenderer LeftCardMesh;
-    public MeshRenderer RightCardMesh;
+    public static Material leftCardMat;
+    public static Material rightCardMat;
+    public MeshRenderer leftCardMesh;
+    public MeshRenderer rightCardMesh;
     public KMGameInfo mGameInfo;
-    public TextMesh DummyMesh;
-    public KMAudio Audio;
+    public TextMesh dummyMesh;
+    public new KMAudio audio;
 
-    
+    #endregion
+
+    //Amount of cards
     private const int AMOUNT_OF_CARDS = 10;
 
-    private static string[] WhiteModuleIDs = { "wire sequence", "simon says", "maze", "memory", "needy capacitor", "who's on first", "needy vent gas", "modules against humanity", "needy knob", "morse code", "two bits", "anagrams", "word scramble", "semaphore", "colour flash", "logic", "listening", "mystic square", "crazy talk", "silly slots", "probing", "forget me not", "morsematics", "simon states", "perspective pegs", "caesar cipher", "tic tac toe", "astrology", "adventure game", "skewed slots", "blind alley", "english test", "mouse in the maze", "turn the keys", "turn the key", "tetris", "sea shells", "murder","adjacent letters","colored squares" ,"hexamaze" ,"souvenir", "simon screams", "http response", "wire placement", "coordinates", "battleship", "game of life simple", "colored switches", "the clock", "button sequences", "burglar alarm",  "backgrounds", "the stopwatch",  "the iphone", "ice cream", "the swan", "monsplode trading cards", "neutralization", "the sun", "european travel", "blind maze", "cheap checkout",};
-    private static string[] BlackModuleIDs = { "the button", "password", "wires", "keypad", "complicated wires", "chess", "switches", "emoji math", "letter keys", "orientation cube", "piano keys", "connection check", "cryptography", "number pad", "alphabet", "round keypad", "plumbing", "safety safe", "resistors", "microcontroller", "the gamepad", "laundry", "3d maze", "follow the leader", "friendship", "the bulb", "monsplode, fight!", "foreign exchange rates", "combination lock", "shape shift", "needy math", "lights out", "motion sense", "needy rotary phone", "needy quiz", "who's that monsplode?", "filibuster", "third base", "bitmaps", "rock-paper-scissors-l.-sp.", "square button", "broken buttons", "word search", "complicated buttons", "symbolic password", "light cycle", "text field", "double-oh", "game of life cruel", "chord qualities", "big circle", "braille", "creation", "cooking", "zoo", "hunting", "symbolic coordinates", "the moon", "mortal kombat", "faulty backgrounds",};
+    //Ids arrays for each individual module separated by what type of card it is
+    private static string[] whiteModuleIds = { "wire sequence", "simon says", "maze", "memory", "needy capacitor", "who's on first", "needy vent gas", "modules against humanity", "needy knob", "morse code", "two bits", "anagrams", "word scramble", "semaphore", "colour flash", "logic", "listening", "mystic square", "crazy talk", "silly slots", "probing", "forget me not", "morsematics", "simon states", "perspective pegs", "caesar cipher", "tic tac toe", "astrology", "adventure game", "skewed slots", "blind alley", "english test", "mouse in the maze", "turn the keys", "turn the key", "tetris", "sea shells", "murder","adjacent letters","colored squares" ,"hexamaze" ,"souvenir", "simon screams", "http response", "wire placement", "coordinates", "battleship", "game of life simple", "colored switches", "the clock", "button sequences", "burglar alarm",  "backgrounds", "the stopwatch",  "the iphone", "ice cream", "the swan", "monsplode trading cards", "neutralization", "the sun", "european travel", "blind maze", "cheap checkout",};
+    private static string[] blackModuleIds = { "the button", "password", "wires", "keypad", "complicated wires", "chess", "switches", "emoji math", "letter keys", "orientation cube", "piano keys", "connection check", "cryptography", "number pad", "alphabet", "round keypad", "plumbing", "safety safe", "resistors", "microcontroller", "the gamepad", "laundry", "3d maze", "follow the leader", "friendship", "the bulb", "monsplode, fight!", "foreign exchange rates", "combination lock", "shape shift", "needy math", "lights out", "motion sense", "needy rotary phone", "needy quiz", "who's that monsplode?", "filibuster", "third base", "bitmaps", "rock-paper-scissors-l.-sp.", "square button", "broken buttons", "word search", "complicated buttons", "symbolic password", "light cycle", "text field", "double-oh", "game of life cruel", "chord qualities", "big circle", "braille", "creation", "cooking", "zoo", "hunting", "symbolic coordinates", "the moon", "mortal kombat", "faulty backgrounds",};
 
+    //Dictionary of ids to texts
     private static Dictionary<string, string> ModuleTexts = new Dictionary<string, string>() {
         { "3d maze", "Want to see this in 3D? There are special glasses for it." },
         { "adjacent letters", "Bomb exploded. I was adjacent to it." },
@@ -156,36 +160,45 @@ public class MAHModule : MonoBehaviour {
         { "game of life cruel", "Life is cruel. So are games." },
     };
 
-    private List<string> WhiteCardText;
-    private List<string> BlackCardText;
-
-    private List<string> LeftCardText;
-    private List<string> RightCardText;
-
-    private Material LeftCardMaterial;
-    private Material RightCardMaterial;
-
-    private int LeftCardIndex;
-    private int RightCardIndex;
-
-    private int CorrectLeftCardIndex;
-    private int CorrectRightCardIndex;
-
-    private bool activated = false;
+    //Texts to display on white/black
+    private List<string> whiteCardText;
+    private List<string> blackCardText;
 
 
-    private bool SwapWhiteBlack;
+    //Texts to display on left/right
+    private List<string> leftCardText;
+    private List<string> rightCardText;
+
+
+    //Materials to change color for left/right
+    private Material leftCardMaterial;
+    private Material rightCardMaterial;
+
+    //Indexes for text on cards
+    private int leftCardIndex;
+    private int rightCardIndex;
+
+    //Indexes for correct answers
+    private int correctLeftCardIndex;
+    private int correctRightCardIndex;
+
+    //Bool determining which side white and black should be on.
+    private bool swapWhiteBlack;
+
+    //Float for the max size text can be in one of the card text meshes
+    //Generated from a premade 'dummy' text mesh that is hidden inside the module
+    //This text mesh has certain characters that together span the length of the card
     private float limit;
 
-    private static int ModuleId = 1;
-    private int MyModuleId;
+    private static int moduleId = 1;
+    private int myModuleId;
 
-    private bool IsSolved = false;
+    private bool isSolved = false;
 
-    private bool IsActive = false;
+    private bool isActive = false;
 
     #region CardFormatting
-
+    //Get the width of text in a text mesh
     public static float GetWidth(TextMesh mesh) {
         float width = 0;
         foreach (char symbol in mesh.text) {
@@ -196,21 +209,31 @@ public class MAHModule : MonoBehaviour {
         }
         return width * mesh.characterSize * 0.1f;
     }
+
+    //Attempt to fix all the Text into a card with no overlapping the edge.
     string FitTextInCard(string text) {
         StringBuilder txt = new StringBuilder();
-        DummyMesh.text = "a";
-        float spaceLength = GetWidth(DummyMesh);
-        DummyMesh.text = "a a";
-        spaceLength = GetWidth(DummyMesh) - spaceLength - spaceLength;
+        //Get length of a space
+        dummyMesh.text = "a";
+        float spaceLength = GetWidth(dummyMesh);
+        dummyMesh.text = "a a";
+        spaceLength = GetWidth(dummyMesh) - spaceLength - spaceLength;
+
+        //Split the text by spaces, and then add the first word to a working stringbuilder.
         float currAmount = 0;
         string[] split = text.Split(' ');
         txt.Append(split[0]);
-        DummyMesh.text = split[0];
-        currAmount = GetWidth(DummyMesh);
+        dummyMesh.text = split[0];
+        currAmount = GetWidth(dummyMesh);
+
+        //Loop through the rest of the words and attempt to fit
         for(int i = 1; i < split.Length; i++) {
+            //Add a space, then get the width of the next word
             txt.Append(" ");
-            DummyMesh.text = split[i];
-            float currLength = GetWidth(DummyMesh);
+            dummyMesh.text = split[i];
+            float currLength = GetWidth(dummyMesh);
+
+            //If width of line is greater than card width, then add newline and reset
             if((currAmount + spaceLength + currLength) > limit) {
                 txt.Append("\n");
                 currAmount = currLength;
@@ -218,117 +241,128 @@ public class MAHModule : MonoBehaviour {
                 currAmount += spaceLength + currLength;
             }
             
-            txt.Append(DummyMesh.text);
+            txt.Append(dummyMesh.text);
         }
         return txt.ToString();
     }
     #endregion
 
     #region CardText
+    //Loop around card text
     void UpdateLeftCardText() {
-        LeftCardIndex += BlackCardText.Count;
-        LeftCardIndex %= BlackCardText.Count;
-        LeftCard.text = LeftCardText[LeftCardIndex];
+        leftCardIndex += AMOUNT_OF_CARDS;
+        leftCardIndex %= AMOUNT_OF_CARDS;
+        leftCard.text = leftCardText[leftCardIndex];
     }
 
     void UpdateRightCardText() {
-        RightCardIndex += BlackCardText.Count;
-        RightCardIndex %= BlackCardText.Count;
-        RightCard.text = RightCardText[RightCardIndex];
+        rightCardIndex += AMOUNT_OF_CARDS;
+        rightCardIndex %= AMOUNT_OF_CARDS;
+        rightCard.text = rightCardText[rightCardIndex];
     }
 
+    //When lights turn on, show text, when lights turn off, void text
     private void OnLightsChange(bool on) {
-        if (!IsActive) return;
+        if (!isActive) return;
         if (on) {
             UpdateLeftCardText();
             UpdateRightCardText();
         } else {
-            LeftCard.text = "";
-            RightCard.text = "";
+            leftCard.text = "";
+            rightCard.text = "";
         }
     }
 
+    //Generate the leftcard/rightcard text based off the black/white texts already randomly picked
+    //Run it through FixTextInCard to insert the newlines in the right spaces.
     private void GenerateCardTexts() {
-        LeftCardText = new List<string>();
-        RightCardText = new List<string>();
-        for (int i = 0; i < BlackCardText.Count; i++) {
-            string black = BlackCardText[i];
-            string white = WhiteCardText[i];
-            if (!SwapWhiteBlack) {
-                LeftCardText.Add(FitTextInCard(ModuleTexts[black]));
-                RightCardText.Add(FitTextInCard(ModuleTexts[white]));
+        leftCardText = new List<string>();
+        rightCardText = new List<string>();
+        for (int i = 0; i < AMOUNT_OF_CARDS; i++) {
+            string black = blackCardText[i];
+            string white = whiteCardText[i];
+            if (!swapWhiteBlack) {
+                leftCardText.Add(FitTextInCard(ModuleTexts[black]));
+                rightCardText.Add(FitTextInCard(ModuleTexts[white]));
             } else {
-                LeftCardText.Add(FitTextInCard(ModuleTexts[white]));
-                RightCardText.Add(FitTextInCard(ModuleTexts[black]));
+                leftCardText.Add(FitTextInCard(ModuleTexts[white]));
+                rightCardText.Add(FitTextInCard(ModuleTexts[black]));
             }
         }
     }
 
+    //Randomly select indexes from the card texts lists based on the module ids.
+    //Repeat until full.
+    //It does have a 50% ish chance to choose a module on the bomb as opposed to a random module
     void ChooseRandomCardTexts(List<string> modules) {
-        BlackCardText = new List<string>();
-        WhiteCardText = new List<string>();
-        StringBuilder Blacks = new StringBuilder();
-        StringBuilder Whites = new StringBuilder();
+        blackCardText = new List<string>();
+        whiteCardText = new List<string>();
         
 
+        //Count and categorise modules on the bomb
         List<string> blackModules = new List<string>();
         List<string> whiteModules = new List<string>();
 
         foreach (string s in modules)
         {
-            if (WhiteModuleIDs.Contains(s))
+            if (whiteModuleIds.Contains(s))
             {
                 whiteModules.Add(s);
             }
-            else if (BlackModuleIDs.Contains(s))
+            else if (blackModuleIds.Contains(s))
             {
                 blackModules.Add(s);
             }
         }
 
-        int blackMods = 0;
-        int whiteMods = 0;
-
-
+        
+        //Generate all cards for both black and white
         for (int i = 0; i < AMOUNT_OF_CARDS; i++) {
+            //Randomly generate a number to choose for a chance of module ids on the bomb
             string blackChosen = "";
             int a = UnityEngine.Random.Range(1, 101);
+            
+            //If we want a random module OR we have no more modules to pick from choose random modules until we get one we haven't gotten
             if (a > 50 || blackModules.Count == 0)
                 do {
-                    blackChosen = BlackModuleIDs[UnityEngine.Random.Range(0, BlackModuleIDs.Length)];
-                } while (BlackCardText.Contains(blackChosen));
+                    blackChosen = blackModuleIds[UnityEngine.Random.Range(0, blackModuleIds.Length)];
+                } while (blackCardText.Contains(blackChosen));
             else
             {
+                //Else, choose from modules on bomb
                 do
                 {
                     blackChosen = blackModules[UnityEngine.Random.Range(0, blackModules.Count)];
-                } while (BlackCardText.Contains(blackChosen));
+                } while (blackCardText.Contains(blackChosen));
             }
-            if (blackModules.Contains(blackChosen)) { blackModules.Remove(blackChosen); blackMods++; }
-            BlackCardText.Add(blackChosen);
+            //If we picked a module that's on the bomb, through the 50% or through luck, delete it
+            if (blackModules.Contains(blackChosen)) blackModules.Remove(blackChosen);
+            //Add to list
+            blackCardText.Add(blackChosen);
+
+            //Exact same process for white
             string whiteChosen = "";
             a = UnityEngine.Random.Range(1, 101);
             if (a > 50 || whiteModules.Count == 0) { 
                 do {
-                    whiteChosen = WhiteModuleIDs[UnityEngine.Random.Range(0, WhiteModuleIDs.Length)];
-                } while (WhiteCardText.Contains(whiteChosen));
+                    whiteChosen = whiteModuleIds[UnityEngine.Random.Range(0, whiteModuleIds.Length)];
+                } while (whiteCardText.Contains(whiteChosen));
             }
             else
             {
                 do
                 {
                     whiteChosen = whiteModules[UnityEngine.Random.Range(0, whiteModules.Count)];
-                } while (WhiteCardText.Contains(whiteChosen));
+                } while (whiteCardText.Contains(whiteChosen));
             }
-            if (whiteModules.Contains(whiteChosen)) { whiteModules.Remove(whiteChosen); whiteMods++; }
-            WhiteCardText.Add(whiteChosen);
-            Blacks.Append(blackChosen + "|");
-            Whites.Append(whiteChosen + "|");
+            if (whiteModules.Contains(whiteChosen)) whiteModules.Remove(whiteChosen);
+            whiteCardText.Add(whiteChosen);
         }
     }
-    #endregion
+    
 
-    #region BombInfo
+   
+    //If we can spell the word poop from the text on a card
     bool SpellPoop(string text) {
         int pCount = 0, oCount = 0;
         text = text.ToLower();
@@ -340,7 +374,9 @@ public class MAHModule : MonoBehaviour {
         }
         return (pCount > 1 && oCount > 1);
     }
+    #endregion
 
+    #region BombInfo
     int GetPortCount(ref int uniques) {
         int i = 0;
         List<string> portTypes = new List<string>();
@@ -355,7 +391,7 @@ public class MAHModule : MonoBehaviour {
         uniques = portTypes.Count;
         return i;
     }
-
+    //Indicators
     void GetLitUnlitCount(out int lit, out int unlit) {
         lit = 0;
         unlit = 0;
@@ -386,8 +422,11 @@ public class MAHModule : MonoBehaviour {
     }
     #endregion
 
+    //On bomb activation
     void OnActivate() {
-        activated = true;
+
+        //Get all modules, then lowercase them and get the Distinct entries. 
+        //So duplicate modules on the bomb aren't counted. So we don't have duplicate card entries.
         List<string> moduleNames = mBombInfo.GetModuleNames();
 
         for (int i = 0; i < moduleNames.Count; i++) {
@@ -398,84 +437,97 @@ public class MAHModule : MonoBehaviour {
         ChooseRandomCardTexts(moduleNames.Distinct().ToList());
         GenerateCardTexts();
 
+
+        //Get the length of the longest word, for log formatting purposes.
         int longestWord = 0;
         for(int i = 0; i < AMOUNT_OF_CARDS;i++)
         {
-            longestWord = BlackCardText[i].Length > longestWord ? BlackCardText[i].Length : longestWord;
-            longestWord = WhiteCardText[i].Length > longestWord ? WhiteCardText[i].Length : longestWord;
+            longestWord = blackCardText[i].Length > longestWord ? blackCardText[i].Length : longestWord;
+            longestWord = whiteCardText[i].Length > longestWord ? whiteCardText[i].Length : longestWord;
         }
 
+        //Logging stuff, so that the state of the module can be decided.
         StringBuilder outString = new StringBuilder();
-        outString.AppendFormat("[Modules Against Humanity #{0}] Modules:\n", MyModuleId);
-
+        outString.AppendFormat("[Modules Against Humanity #{0}] Modules:\n", myModuleId);
+        //Log which side white and black are on.
         var formatString1 = "    {0," + -longestWord + "}|{1," + longestWord + "}\n";
-        if (!SwapWhiteBlack) {
+        if (!swapWhiteBlack) {
             outString.Append(String.Format(formatString1,"Black","White"));
         } else {
             outString.Append(String.Format(formatString1, "White","Black"));
         }
-
+        //Log the module ids in proper columns
         string formatString2 = "{0,2}: {1," + -longestWord + "}|{2," + longestWord + "}\n";
-        for (int i = 0; i < BlackCardText.Count; i++) {
-            if (!SwapWhiteBlack) {
-                outString.Append(String.Format(formatString2, i+1, BlackCardText[i], WhiteCardText[i]));
+        for (int i = 0; i < AMOUNT_OF_CARDS; i++) {
+            if (!swapWhiteBlack) {
+                outString.Append(String.Format(formatString2, i+1, blackCardText[i], whiteCardText[i]));
             } else {
-                outString.Append(String.Format(formatString2, i+1, WhiteCardText[i], BlackCardText[i]));
+                outString.Append(String.Format(formatString2, i+1, whiteCardText[i], blackCardText[i]));
             }
         }
+
+        //Log the starting texts
         outString.Append("\nText for first two cards:\n");
-        outString.AppendFormat("Black: {0}\nWhite: {1}\n\n", ModuleTexts[BlackCardText[0]], ModuleTexts[WhiteCardText[0]]);
+        outString.AppendFormat("Black: {0}\nWhite: {1}\n\n", ModuleTexts[blackCardText[0]], ModuleTexts[whiteCardText[0]]);
 
-
+        //Solution calculation
+        //Start off with dummy solution indexes
         int tempWhiteIndex = 0;
         int tempBlackIndex = 0;
+
+        //Get information from the bomb
         bool containsMAH = GetSerialMAH();
         int uniquePorts = 0;
         int ports = GetPortCount(ref uniquePorts);
 
         int tempLit, tempUnlit;
         GetLitUnlitCount(out tempLit, out tempUnlit);
-        if (SpellPoop(ModuleTexts[BlackCardText[tempBlackIndex]])) {
+
+        //If the text on the first card can spell 'poop', yes, I'm sad too.
+        //Determine black/white secondary position based on the case
+        if (SpellPoop(ModuleTexts[blackCardText[tempBlackIndex]])) {
             outString.Append("Could spell poop with initial black card\n");
             tempBlackIndex = 1;
         } else {
             outString.Append("Could not spell poop with initial black card\n");
-            tempBlackIndex = (tempUnlit + ports-1 + BlackCardText.Count) % BlackCardText.Count;
+            tempBlackIndex = (tempUnlit + ports-1 + AMOUNT_OF_CARDS) % AMOUNT_OF_CARDS;
         }
-        outString.AppendFormat("Secondary black card position is: {0}, text is: {1}\n\n",tempBlackIndex + 1, ModuleTexts[BlackCardText[tempBlackIndex]]);
+        outString.AppendFormat("Secondary black card position is: {0}, text is: {1}\n\n",tempBlackIndex + 1, ModuleTexts[blackCardText[tempBlackIndex]]);
 
-        if (SpellPoop(ModuleTexts[WhiteCardText[tempWhiteIndex]])) {
+        if (SpellPoop(ModuleTexts[whiteCardText[tempWhiteIndex]])) {
             outString.Append("Could spell poop with initial white card\n");
             tempWhiteIndex = 1;
         } else {
             outString.Append("Could not spell poop with initial white card\n");
             int i = GetNumberOfBatteries();
-            tempWhiteIndex = (tempLit + i - 1 + BlackCardText.Count) % BlackCardText.Count;
+            tempWhiteIndex = (tempLit + i - 1 + AMOUNT_OF_CARDS) % AMOUNT_OF_CARDS;
         }
-        outString.AppendFormat("Secondary white card position is: {0}, text is: {1}\n\n", tempWhiteIndex + 1, ModuleTexts[WhiteCardText[tempWhiteIndex]]);
+        outString.AppendFormat("Secondary white card position is: {0}, text is: {1}\n\n", tempWhiteIndex + 1, ModuleTexts[whiteCardText[tempWhiteIndex]]);
 
 
-        if (moduleNames.Contains(BlackCardText[tempBlackIndex]) && moduleNames.Contains(WhiteCardText[tempWhiteIndex])) {
+        //If the cards reference a module on the bomb.
+        if (moduleNames.Contains(blackCardText[tempBlackIndex]) && moduleNames.Contains(whiteCardText[tempWhiteIndex])) {
             outString.Append("Both modules were found on the bomb\n");
             tempBlackIndex += 4;
-            tempBlackIndex %= BlackCardText.Count;
+            tempBlackIndex %= AMOUNT_OF_CARDS;
             tempWhiteIndex += 3;
-            tempWhiteIndex %= BlackCardText.Count;
-        }else if (moduleNames.Contains(BlackCardText[tempBlackIndex])) {
+            tempWhiteIndex %= AMOUNT_OF_CARDS;
+        }else if (moduleNames.Contains(blackCardText[tempBlackIndex])) {
             outString.Append("Black card module was found on the bomb\n");
             tempWhiteIndex += 2;
-            tempWhiteIndex %= BlackCardText.Count;
-        }else if (moduleNames.Contains(WhiteCardText[tempWhiteIndex])) {
+            tempWhiteIndex %= AMOUNT_OF_CARDS;
+        }else if (moduleNames.Contains(whiteCardText[tempWhiteIndex])) {
             outString.Append("White card module was found on the bomb\n");
             tempBlackIndex += 1;
-            tempBlackIndex %= BlackCardText.Count;
+            tempBlackIndex %= AMOUNT_OF_CARDS;
         } else {
+            //If neither, then test rules in otherwise section.
             outString.Append("Neither module was found on the bomb\n");
             if (containsMAH) {
                 outString.Append("Serial contained M/A/H\n");
                 tempWhiteIndex -= 2;
                 tempBlackIndex -= 2;
-            }else if (!SwapWhiteBlack) {
+            }else if (!swapWhiteBlack) {
                 outString.Append("Black card was on left\n");
                 tempWhiteIndex = tempLit + tempUnlit - 1;
                 tempBlackIndex = uniquePorts - 1;
@@ -484,52 +536,59 @@ public class MAHModule : MonoBehaviour {
                 tempBlackIndex = moduleNames.Count - 1;
             }
 
-            tempWhiteIndex += BlackCardText.Count;
-            tempBlackIndex += BlackCardText.Count;
-            tempWhiteIndex %= BlackCardText.Count;
-            tempBlackIndex %= BlackCardText.Count;
+            tempWhiteIndex += AMOUNT_OF_CARDS;
+            tempBlackIndex += AMOUNT_OF_CARDS;
+            tempWhiteIndex %= AMOUNT_OF_CARDS;
+            tempBlackIndex %= AMOUNT_OF_CARDS;
         }
-        if (!SwapWhiteBlack) {
-            CorrectLeftCardIndex = (tempBlackIndex + BlackCardText.Count) % BlackCardText.Count;
-            CorrectRightCardIndex = (tempWhiteIndex + BlackCardText.Count) % BlackCardText.Count;
+        //Determine which ones are the right indexes to set, then set the solution indexes
+        if (!swapWhiteBlack) {
+            correctLeftCardIndex = (tempBlackIndex + AMOUNT_OF_CARDS) % AMOUNT_OF_CARDS;
+            correctRightCardIndex = (tempWhiteIndex + AMOUNT_OF_CARDS) % AMOUNT_OF_CARDS;
         } else {
-            CorrectLeftCardIndex = (tempWhiteIndex + BlackCardText.Count) % BlackCardText.Count;
-            CorrectRightCardIndex = (tempBlackIndex + BlackCardText.Count) % BlackCardText.Count;
+            correctLeftCardIndex = (tempWhiteIndex + AMOUNT_OF_CARDS) % AMOUNT_OF_CARDS;
+            correctRightCardIndex = (tempBlackIndex + AMOUNT_OF_CARDS) % AMOUNT_OF_CARDS;
         }
+
+        //Final logging stuffs.
         outString.Append("Final cards: ");
-        if (!SwapWhiteBlack) {
+        if (!swapWhiteBlack) {
             outString.AppendFormat("Black: {0}, White: {1}", tempBlackIndex + 1, tempWhiteIndex + 1);
         } else {
             outString.AppendFormat("White: {0}, Black: {1}", tempWhiteIndex + 1, tempBlackIndex + 1);
         }
 
-        Debug.Log(String.Format("[Modules Against Humanity#{0}]: Total number of modules on the bomb: {1}",MyModuleId,moduleNames.Count));
+        Debug.Log(String.Format("[Modules Against Humanity#{0}]: Total number of modules on the bomb: {1}",myModuleId,moduleNames.Count));
         Debug.Log(outString.ToString());
-        IsActive = true;
+        isActive = true;
     }
 
+    //Button Interaction handlers
+    
+    //Reset button is hit, reset cards to 0 index
     bool ResetButtonInteract() {
-        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, ResetButton.transform);
-        LeftCardIndex = 0;
+        audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, resetButton.transform);
+        leftCardIndex = 0;
         UpdateLeftCardText();
-        RightCardIndex = 0;
+        rightCardIndex = 0;
         UpdateRightCardText();
         return false;
     }
 
+    //Solve button it hit, check if the submitted indexes are the right indexes.
     bool CheckSolve() {
-        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, AcceptButton.transform);
-        if (!activated || IsSolved)
+        audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, acceptButton.transform);
+        if (!isActive || isSolved)
             return false;
         StringBuilder s = new StringBuilder();
-        s.AppendFormat("[Modules Against Humanity #{0}] Submitted: {1}: {2}, {3}: {4} : ", MyModuleId, (!SwapWhiteBlack ? "Black" : "White"), LeftCardIndex + 1, (!SwapWhiteBlack ? "White" : "Black"), RightCardIndex + 1);
+        s.AppendFormat("[Modules Against Humanity #{0}] Submitted: {1}: {2}, {3}: {4} : ", myModuleId, (!swapWhiteBlack ? "Black" : "White"), leftCardIndex + 1, (!swapWhiteBlack ? "White" : "Black"), rightCardIndex + 1);
 
-        if (LeftCardIndex == CorrectLeftCardIndex && RightCardIndex == CorrectRightCardIndex) {
-            IsSolved = true;
+        if (leftCardIndex == correctLeftCardIndex && rightCardIndex == correctRightCardIndex) {
+            isSolved = true;
             s.Append("Pass");
             Debug.Log(s.ToString());
             mBombModule.HandlePass();
-            Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, this.transform);
+            audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, this.transform);
         } else {
             s.Append("Strike");
             Debug.Log(s.ToString());
@@ -539,60 +598,70 @@ public class MAHModule : MonoBehaviour {
         return false;
     }
 
-    // Use this for initialization
+    //Init
     void Start () {
-        MyModuleId = ModuleId++;
-        limit = GetWidth(DummyMesh);
+        myModuleId = moduleId++;
+        //Set limit width of text to the predefined length generated in the editor
+        limit = GetWidth(dummyMesh);
 
-        if(LeftCardMat == null) {
-            LeftCardMat = LeftCardMesh.material;
+        //Set the materials to the right materials for the meshes
+        if(leftCardMat == null) {
+            leftCardMat = leftCardMesh.material;
         }
-        if(RightCardMat == null) {
-            RightCardMat = RightCardMesh.material;
+        if(rightCardMat == null) {
+            rightCardMat = rightCardMesh.material;
         }
 
-        SwapWhiteBlack = UnityEngine.Random.Range(0, 1000) % 2 == 0;
-        LeftCardMaterial = Instantiate(LeftCardMat);
-        RightCardMaterial = Instantiate(RightCardMat);
-        LeftCardMesh.material = LeftCardMaterial;
-        RightCardMesh.material = RightCardMaterial;
+        //Randomly decide if the cards should swap colors
+        swapWhiteBlack = UnityEngine.Random.Range(0, 1000) % 2 == 0;
+
+        //Instantiate a NEW version of the material.
+        //Stops the effect of changing one modules color to change them all.
+        leftCardMaterial = Instantiate(leftCardMat);
+        rightCardMaterial = Instantiate(rightCardMat);
+        leftCardMesh.material = leftCardMaterial;
+        rightCardMesh.material = rightCardMaterial;
         
+        //Set the lights change handler
         mGameInfo.OnLightsChange += OnLightsChange;
 
-        if (!SwapWhiteBlack) {
-            LeftCardMaterial.color = Color.black;
-            RightCardMaterial.color = Color.white;
-            LeftCard.color = Color.white;
-            RightCard.color = Color.black;
+        //Determine the swap sides, then set the card and the text colors accordingly
+        if (!swapWhiteBlack) {
+            leftCardMaterial.color = Color.black;
+            rightCardMaterial.color = Color.white;
+            leftCard.color = Color.white;
+            rightCard.color = Color.black;
         } else {
-            LeftCardMaterial.color = Color.white;
-            RightCardMaterial.color = Color.black;
-            LeftCard.color = Color.black;
-            RightCard.color = Color.white;
+            leftCardMaterial.color = Color.white;
+            rightCardMaterial.color = Color.black;
+            leftCard.color = Color.black;
+            rightCard.color = Color.white;
         }
 
-        for (int i = 0; i < LeftCardButtons.Length; i++) {
+        //Set handlers
+        for (int i = 0; i < leftCardButtons.Length; i++) {
             int j = i;
-            LeftCardButtons[j].OnInteract += () => { Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, LeftCardButtons[j].transform); LeftCardIndex += (2 * j) - 1; UpdateLeftCardText(); return false; };
+            leftCardButtons[j].OnInteract += () => { audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, leftCardButtons[j].transform); leftCardIndex += (2 * j) - 1; UpdateLeftCardText(); return false; };
         }
 
-        for (int i = 0; i < RightCardButtons.Length; i++) {
+        for (int i = 0; i < rightCardButtons.Length; i++) {
             int j = i;
-            RightCardButtons[j].OnInteract += () => { Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, RightCardButtons[j].transform); RightCardIndex += (2 * j) - 1; UpdateRightCardText(); return false; };
+            rightCardButtons[j].OnInteract += () => { audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, rightCardButtons[j].transform); rightCardIndex += (2 * j) - 1; UpdateRightCardText(); return false; };
         }
 
 
 
-        ResetButton.OnInteract += ResetButtonInteract;
+        resetButton.OnInteract += ResetButtonInteract;
 
 
 
         
-        AcceptButton.OnInteract += CheckSolve;
+        acceptButton.OnInteract += CheckSolve;
         mBombModule.OnActivate += OnActivate;
         
     }
 
+    //Made by Caitsith2, twitch plays support.
     KMSelectable[] ProcessTwitchCommand(string command) {
         List<KMSelectable> buttons = new List<KMSelectable>();
         string[] split = command.ToLowerInvariant().Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
@@ -600,15 +669,15 @@ public class MAHModule : MonoBehaviour {
         if (split.Length == 2) {
             if (split[0] != "press" || (split[1] != "submit" && split[1] != "reset"))
                 return null;
-            buttons.Add(split[1] == "reset" ? ResetButton : AcceptButton);
+            buttons.Add(split[1] == "reset" ? resetButton : acceptButton);
         }
         else if (split.Length == 3) {
             int pos;
             if (split[0] != "move" || (split[1] != "white" && split[1] != "black") || !int.TryParse(split[2], out pos))
                 return null;
             pos %= AMOUNT_OF_CARDS;
-            KMSelectable[] WhiteButtons = SwapWhiteBlack ? LeftCardButtons : RightCardButtons;
-            KMSelectable[] BlackButtons = SwapWhiteBlack ? RightCardButtons : LeftCardButtons;
+            KMSelectable[] WhiteButtons = swapWhiteBlack ? leftCardButtons : rightCardButtons;
+            KMSelectable[] BlackButtons = swapWhiteBlack ? rightCardButtons : leftCardButtons;
             KMSelectable[] SelectedButtons = split[1] == "white" ? WhiteButtons : BlackButtons;
             int index = pos < 0 ? 0 : 1;
             pos = Math.Abs(pos);
