@@ -180,9 +180,9 @@ public class Laundry : MonoBehaviour
 
     //Different texts for showing on the module and logging
     private static string[] washingText = { "Machine Wash Permanent Press", "Machine Wash Gentle or Delicate", "Hand Wash", "Do Not Wash", "30°C", "40°C", "50°C", "60°C", "70°C", "95°C", "Do Not Wring" };
-    private static string[] dryingText = { "Tumble Dry", "1 Dot", "1 Dot", "3 Dot", "No Heat", "Hang to Dry", "Drip Dry", "Dry Flat", "Dry in the Shade", "Do Not Dry", "Do Not Tumble Dry", "Dry" };
-    private static string[] ironingText = { "Iron", "Don't Iron", "110°C", "300°F", "200°C", "No Steam" };
-    private static string[] specialText = { "Bleach", "Don't Bleach", "No Chlorine", "Dryclean", "Any Solvent", "No Tetrachlore", "Petroleum Only", "Wet Cleaning", "Don't Dryclean", "Short Cycle", "Reduced Moist", "Low Heat", "No Steamfinish" };
+    private static string[] dryingText = { "Tumble Dry", "1 Dot", "2 Dot", "3 Dot", "No Heat", "Hang to Dry", "Drip Dry", "Dry Flat", "Dry in the Shade", "Do Not Dry", "Do Not Tumble Dry", "Dry" };
+    private static string[] ironingText = { "Iron", "Do Not Iron", "110°C", "300°F", "200°C", "No Steam" };
+    private static string[] specialText = { "Bleach", "Don't Bleach", "No Chlorine", "Dryclean", "Any Solvent", "No Tetrachlore", "Petroleum Only", "Wet Cleaning", "Do Not Dryclean", "Short Cycle", "Reduced Moist", "Low Heat", "No Steam Finish" };
     private static string[] clothingNames = { "Corset", "Shirt", "Skirt", "Skort", "Shorts", "Scarf" };
     private static string[] materialNames = { "Polyester", "Cotton", "Wool", "Nylon", "Corduroy", "Leather" };
     private static string[] colorNames = { "Ruby Fountain", "Star Lemon Quartz", "Sapphire Springs", "Jade Cluster", "Clouded Pearl", "Malinite" };
@@ -441,6 +441,14 @@ public class Laundry : MonoBehaviour
             Enum[] solution = solutions[solvedCount];
             s.AppendFormat("Entered Values: {0}, {1}, {2}, {3}\n", washingText[leftKnobPos], dryingText[rightKnobPos], ironingText[ironingTextPos], specialText[specialTextPos]);
 
+            if(solution.Length == 1)
+            {
+                isSolved = true;
+                s.Append("Pass");
+                HandlePass();
+                return;
+            }
+
             //Bools for checking if entered index are the solution indexes
             bool WashingCorrect = (int)(LWash)solution[0] == leftKnobPos;
             bool DryingCorrect = (int)(LDry)solution[1] == rightKnobPos;
@@ -448,7 +456,7 @@ public class Laundry : MonoBehaviour
             bool SpecialCorrect = (int)(LSpec)solution[3] == specialTextPos;
 
             //If so, then we pass, else we fail.
-            if (WashingCorrect && DryingCorrect && IroningCorrect && SpecialCorrect || solution.Length == 1) {
+            if (WashingCorrect && DryingCorrect && IroningCorrect && SpecialCorrect) {
                 isSolved = true;
                 s.Append("Pass");
                 HandlePass();
