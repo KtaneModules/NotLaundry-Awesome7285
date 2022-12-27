@@ -182,7 +182,7 @@ public class Laundry : MonoBehaviour
     private static string[] washingText = { "Machine Wash Permanent Press", "Machine Wash Gentle or Delicate", "Hand Wash", "Do Not Wash", "30°C", "40°C", "50°C", "60°C", "70°C", "95°C", "Do Not Wring" };
     private static string[] dryingText = { "Tumble Dry", "1 Dot", "2 Dot", "3 Dot", "No Heat", "Hang to Dry", "Drip Dry", "Dry Flat", "Dry in the Shade", "Do Not Dry", "Do Not Tumble Dry", "Dry" };
     private static string[] ironingText = { "Iron", "Do Not Iron", "110°C", "300°F", "200°C", "No Steam" };
-    private static string[] specialText = { "Bleach", "Don't Bleach", "No Chlorine", "Dryclean", "Any Solvent", "No Tetrachlore", "Petroleum Only", "Wet Cleaning", "Do Not Dryclean", "Short Cycle", "Reduced Moist", "Low Heat", "No Steam Finish" };
+    private static string[] specialText = { "Bleach", "Don't Bleach", "No Chlorine", "Dryclean", "Any Solvent", "No Tetrachlore", "Petroleum Only", "Wet Cleaning", "Don't Dryclean", "Short Cycle", "Reduced Moist", "Low Heat", "No Steam Finish" };
     private static string[] clothingNames = { "Corset", "Shirt", "Skirt", "Skort", "Shorts", "Scarf" };
     private static string[] materialNames = { "Polyester", "Cotton", "Wool", "Nylon", "Corduroy", "Leather" };
     private static string[] colorNames = { "Ruby Fountain", "Star Lemon Quartz", "Sapphire Springs", "Jade Cluster", "Clouded Pearl", "Malinite" };
@@ -545,7 +545,7 @@ public class Laundry : MonoBehaviour
         };
     static Dictionary<string, int> dryIndex = new Dictionary<string, int>()
         {
-            {"tumbledry",0 }, {"0dot",1}, {"0dots",1},
+            {"tumbledry",0 }, {"0dot",0}, {"0dots",0},
             {"lowheat",1 }, {"1dot",1 },
             {"mediumheat",2 }, {"2dot",2 },{"2dots",2 },
             {"highheat",3 }, {"3dot",3 },{"3dots",3 },

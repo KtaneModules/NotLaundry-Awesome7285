@@ -47,7 +47,7 @@ public class MAHModule : MonoBehaviour {
         { "broken buttons", "Pressing these buttons is useless. They’re broken." },
         { "caesar cipher", "You dealt with it like a true Caesar." },
         { "chess", "I would play even Billy the Puppet if that game was chess." },
-        { "colored squares" , "It's cool to be square but only if your colored." },
+        { "colored squares" , "It's cool to be square but only if you're colored." },
         { "colour flash", "That almost got you dead. Your whole life flashed before your eyes." },
         { "combination lock", "Are you sure this is the combination you need?" },
         { "complicated buttons", "Pressing buttons should be easy, not complicated." },
@@ -561,6 +561,7 @@ public class MAHModule : MonoBehaviour {
         Debug.Log(String.Format("[Modules Against Humanity#{0}]: Total number of modules on the bomb: {1}",myModuleId,moduleNames.Count));
         Debug.Log(outString.ToString());
         isActive = true;
+        OnLightsChange(true);
     }
 
     //Button Interaction handlers
@@ -600,6 +601,8 @@ public class MAHModule : MonoBehaviour {
 
     //Init
     void Start () {
+        
+
         myModuleId = moduleId++;
         //Set limit width of text to the predefined length generated in the editor
         limit = GetWidth(dummyMesh);
@@ -624,7 +627,6 @@ public class MAHModule : MonoBehaviour {
         
         //Set the lights change handler
         mGameInfo.OnLightsChange += OnLightsChange;
-
         //Determine the swap sides, then set the card and the text colors accordingly
         if (!swapWhiteBlack) {
             leftCardMaterial.color = Color.black;

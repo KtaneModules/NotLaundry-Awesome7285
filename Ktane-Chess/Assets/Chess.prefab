@@ -1403,6 +1403,7 @@ GameObject:
   - component: {fileID: 11460040}
   - component: {fileID: 11406832}
   - component: {fileID: 114000014090717092}
+  - component: {fileID: 114942030082270264}
   m_Layer: 0
   m_Name: Chess
   m_TagString: Untagged
@@ -4957,6 +4958,7 @@ MonoBehaviour:
   - {fileID: 2311246}
   - {fileID: 2398184}
   - {fileID: 2313340}
+  ruleSeed: {fileID: 114942030082270264}
   isSolved: 0
 --- !u!114 &11460312
 MonoBehaviour:
@@ -5758,3 +5760,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShaderNames:
   - GUI/KT 3D Text
+--- !u!114 &114942030082270264
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 194644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adf69c2de51bd3c43bbd9bc22578ee08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _seed: 1
