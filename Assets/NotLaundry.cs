@@ -452,7 +452,7 @@ public class NotLaundry : MonoBehaviour
 
         bool statementIsTrue = false;
         int theValue = -1;
-        string correctPress = "N";
+        string correctPress = "None";
         string[] mathWords = { "Even", "Odd" }; // For logging
         int evenCheck = 0;
 
@@ -542,9 +542,9 @@ public class NotLaundry : MonoBehaviour
 
         // If both value is even & colour is green or both not, return left otherwise right
         if ((theValue % 2 == evenCheck) ^ (randomSlotColour == 0)) {
-            correctPress = "R";
+            correctPress = "Right";
         } else {
-            correctPress = "L";
+            correctPress = "Left";
         }
         
 
@@ -552,10 +552,10 @@ public class NotLaundry : MonoBehaviour
         Debug.LogFormat("[Not Laundry #{0}] The value is {1} and the coin slot colour is {2}, which means the correct dial to press is {3}.", ModuleId, mathWords[theValue % 2], coinSlotColourNames[randomSlotColour], correctPress);
 
         if (thisDial == correctPress) {
-            Debug.LogFormat("[Not Laundry #{0}] Correct Press.", ModuleId);
+            Debug.LogFormat("[Not Laundry #{0}] You pressed {1}. That was correct.", ModuleId, thisDial);
             presses++;
         } else {
-            Debug.LogFormat("[Not Laundry #{0}] Incorrect Press.", ModuleId);
+            Debug.LogFormat("[Not Laundry #{0}] You pressed {1}. That was incorrect.", ModuleId, thisDial);
             HandleStrike();
         }
         
@@ -563,30 +563,35 @@ public class NotLaundry : MonoBehaviour
         // Solve
         if (presses == 3) {
             HandlePass();
+            isSolved = true;
         }
     }
 
     // Functions for the knob buttons.
     void LeftKnob()
     {
-        string thisDial = "L";
-        SubmitDialPress(thisDial);
-        leftKnobPos++;
-        leftKnobPos = (leftKnobPos + washingDisplay.Length) % washingDisplay.Length; //idk why it adds again
-        knobs[0].transform.Rotate(new Vector3(0, dialRotate, 0)); // maybe this adds the rotation relative? so it's not added from 0 every time
-        leftKnobDisplay.material =  washingDisplay[leftKnobPos]; // update material
-        sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, knobs[0].transform); // play sound
+        if (!isSolved) {
+            string thisDial = "Left";
+            SubmitDialPress(thisDial);
+            leftKnobPos++;
+            leftKnobPos = (leftKnobPos + washingDisplay.Length) % washingDisplay.Length; //idk why it adds again
+            knobs[0].transform.Rotate(new Vector3(0, dialRotate, 0)); // maybe this adds the rotation relative? so it's not added from 0 every time
+            leftKnobDisplay.material =  washingDisplay[leftKnobPos]; // update material
+            sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, knobs[0].transform); // play sound
+        }
     }
 
     void RightKnob()
     {
-        string thisDial = "R";
-        SubmitDialPress(thisDial);
-        rightKnobPos++;
-        rightKnobPos = (rightKnobPos + dryingDisplay.Length) % dryingDisplay.Length;
-        knobs[1].transform.Rotate(new Vector3(0, dialRotate, 0));
-        rightKnobDisplay.material = dryingDisplay[rightKnobPos];
-        sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, knobs[1].transform);
+        if (!isSolved) {
+            string thisDial = "Right";
+            SubmitDialPress(thisDial);
+            rightKnobPos++;
+            rightKnobPos = (rightKnobPos + dryingDisplay.Length) % dryingDisplay.Length;
+            knobs[1].transform.Rotate(new Vector3(0, dialRotate, 0));
+            rightKnobDisplay.material = dryingDisplay[rightKnobPos];
+            sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, knobs[1].transform);
+        }
     }
     
 
