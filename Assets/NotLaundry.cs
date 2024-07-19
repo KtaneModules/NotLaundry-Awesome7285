@@ -263,7 +263,7 @@ public class NotLaundry : MonoBehaviour
         knobs[0].transform.Rotate(new Vector3(0, dialRotate*leftKnobPos-90, 0));
         knobs[1].transform.Rotate(new Vector3(0, dialRotate*rightKnobPos-90, 0));
         leftKnobDisplay.material =  washingDisplay[leftKnobPos];
-        rightKnobDisplay.material =  dryingDisplay[leftKnobPos];
+        rightKnobDisplay.material =  dryingDisplay[rightKnobPos];
 
         // Randomize the displays
         ironingTextPos = Rnd.Range(0, ironingText.Length); //6

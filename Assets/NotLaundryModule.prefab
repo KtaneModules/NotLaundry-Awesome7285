@@ -2286,12 +2286,12 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 117778f5694986545aee6d3173c670a8, type: 2}
   - {fileID: 2100000, guid: 1ec07d2418c120448a252472850f6bd2, type: 2}
   - {fileID: 2100000, guid: 5a6df2f3406f9874a9276109fed44370, type: 2}
-  - {fileID: 2100000, guid: 6ca63ae41d000dc42938640a07a12903, type: 2}
   - {fileID: 2100000, guid: bab2d14cd8b852c4dbec6805979be699, type: 2}
   - {fileID: 2100000, guid: 6b527950261332946be8a162567497d6, type: 2}
   - {fileID: 2100000, guid: 54803d3b44dbfb841b61e7023c844833, type: 2}
   - {fileID: 2100000, guid: 3754a7ba3eb363f418bcc1abda74b8e9, type: 2}
   - {fileID: 2100000, guid: aa63a9f262377014fa863ad972aa269b, type: 2}
+  - {fileID: 2100000, guid: 6ca63ae41d000dc42938640a07a12903, type: 2}
   coinSlotColours:
   - {fileID: 2100000, guid: 080f8e3bc08292843bc3ec3fe3fb954f, type: 2}
   - {fileID: 2100000, guid: 4e5cca3b2b183ed49b1502a937f066dc, type: 2}
